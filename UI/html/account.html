@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>Creates bank account</title>
+	<link rel="stylesheet" type="text/css" href="../css/index.css">
+	<link rel="stylesheet" type="text/css" href="../fontawesome-free/css/all.min.css">
+</head>
+<body>
+	<header>
+		<div class="logo"><span class="highlight">Create</span> a Bank Account</div>
+		<nav>
+			<ul>
+				<li><a href="#">Profile</a></li>
+				<li><a href="index.html">Logout</a></li>
+			</ul>
+		</nav>
+		<div class="menu-toggle">
+			<i class="fa fa-bars"></i>
+		</div>
+	</header>
+
+	<div class="container container-bgcolor">
+		<div class="staff1">
+	    <div class="account">
+		    <form>
+                <p id="hi" align="center" style="color: #28a745">Create a Bank Account</p>
+		        <hr>
+			    <p>Account Type</p>
+			    <select id="hip">
+				    <option value="text"> saving Account</option>
+				    <option value="text"> Current Account</option>
+			    </select>
+			    <p>Title</p>
+			    <select id="hop">
+				    <option value="text"> Ms</option>
+				    <option value="text"> Miss</option>
+				    <option value="text"> Mrs</option>
+				    <option value="text"> MR</option>
+			    </select>
+			    <p>First Name</p>
+			    <input type="text" name="First Name" placeholder="First name">
+			    <p>Middle Name</p>
+			    <input type="text" name="Middle Name" placeholder="Middle name">
+			    <p>Last Name</p>
+			    <input type="text" name="Last Name" placeholder="Last name">
+			    <p>Profile Image</p>
+                <input type="file" name="pic" accept="image/*" style="display: inline;">
+			    <p>Telephone</p>
+			    <input type="text" name="Telephone" placeholder="Telephone">
+			    <p>E-mail</p>
+			    <input type="text" name="E-mail" placeholder="E-mail">
+			    <button type="submit" id="button1">Save</button>
+		</form>	
+
+	   </div>
+	</div>
+</div>
+    <script type="text/javascript">
+			document.getElementsByClassName('menu-toggle')[0].onclick = function () {
+				document.getElementsByTagName('nav')[0].classList.toggle('active');
+			}
+    </script>
+    <footer>
+		   <ul >
+		      <li><a href="adminlogin.html">Administration</a></li>
+		      <hr>
+		      <li><p align="center">Welcome to Banka, copyright &copy;2019</p></li>
+		   </ul>
+    </footer>
+</body>
+
+</html>
