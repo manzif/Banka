@@ -26,6 +26,14 @@ class Validate{
         };
         return Joi.validate(user, schema);
     }
+    validateTransaction(user) {
+        const schema = {
+            accountNumber: Joi.number().integer().required(),
+            cashier: Joi.number().integer().required(),
+            amount: Joi.number().integer().required()
+        };
+        return Joi.validate(user, schema);
+    }
 
 }
 
