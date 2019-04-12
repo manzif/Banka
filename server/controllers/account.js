@@ -71,6 +71,12 @@ class Account{
         }
         res.status(200).json({ status: 200, data: data});
     }
+    delete(req,res){
+        const account = accounts.find(c => c.accountNumber === parseInt(req.params.account_number));
+        if(!account) return res.status(400).json({ status: 400, error: 'Account requested is not available' });
+        accounts.splice(accounts.indexOf(account), 1);
+        res.status(200).json({ status: 200, message: 'Account successfully deleted' });
+    }
 }
 
 
