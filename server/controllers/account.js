@@ -58,6 +58,19 @@ class Account{
         }
         res.status(200).json({ status: 200, data: data});
     }
+    deactivate(req,res){
+        const account = accounts.find(c => c.accountNumber === parseInt(req.params.account_number));
+        if(!account) return res.status(400).json({ status: 400, error: 'Account requested is not available' });
+        if(account.status !== 'active'){
+            return res.status(400).json({ status: 400, error: 'Account is deactivated' });
+        }
+        account.status = 'Dormant';
+        const data = {
+            accountNumber: account.accountNumber,
+            status: account.status
+        }
+        res.status(200).json({ status: 200, data: data});
+    }
 }
 
 
