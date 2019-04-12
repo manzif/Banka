@@ -19,6 +19,13 @@ class Validate{
         };
         return Joi.validate(user, schema);
     }
+    validateAccount(user) {
+        const schema = {
+            user: Joi.number().integer().required(),
+            Type: Joi.string().required()
+        };
+        return Joi.validate(user, schema);
+    }
 
 }
 
