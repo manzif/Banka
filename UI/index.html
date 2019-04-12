@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width">
+		<title>BANKA</title>
+		<link rel="stylesheet" type="text/css" href="./css/index.css">
+		<link rel="stylesheet" type="text/css" href="./fontawesome-free/css/all.min.css">
+	</head>
+<body>
+		<header>
+			<div class="logo"><span class="highlight">BA</span>NKA</div>
+			<nav>
+				<ul>
+					<li><a href="index.html">Singup</a></li>
+					<li><a href="./html/userlogin.html">Login</a></li>
+				</ul>
+			</nav>
+			<div class="menu-toggle">
+				<i class="fa fa-bars"></i>
+			</div>
+		</header>
+
+	    <div class="container container-img">
+				<div class="signup">
+		    		<h1>Sign Up</h1>
+		    		<form id="for">
+						<p>First Name</p>
+						<input type="text" name="First name" placeholder="Enter First Name">
+						<p>Last Name</p>
+						<input type="text" name="Last name" placeholder="Enter Last Name">
+						<p>Telephone</p>
+						<input type="number" name="Telephone" placeholder="Telephone number">
+						<p>e-mail</p>
+						<input type="e-mail" name="e-mail" placeholder="E-mail">
+						<p>Id</p>
+						<input type="number" name="id" placeholder="Enter Identity number"><br>
+						<input type="submit" value="Sign Up">
+						<a href="">Already have an account?</a>
+					</form>	
+		    	</div>
+	    </div>
+	    <footer>
+		   <ul class="Usefull">
+		      <li><a href="./html/adminlogin.html">Administration</a></li>
+		      <hr>
+		      <li><p align="center">Welcome to Banka, copyright &copy;2019</p></li>
+		   </ul>
+		</footer>
+        <script type="text/javascript">
+			document.getElementsByClassName('menu-toggle')[0].onclick = function () {
+				document.getElementsByTagName('nav')[0].classList.toggle('active');
+			}
+		</script>
+		
+</body>
+</html>

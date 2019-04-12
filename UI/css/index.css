@@ -24,7 +24,7 @@ header .logo{
 	font-size: 24px;
 	float: left;
 	font-weight: bold;
-	margin-top: 10px;
+	margin-top: 2%;
 }
 .highlight{
 	color: #379683;
@@ -32,7 +32,7 @@ header .logo{
 
 header nav{
 	float: right;
-	margin-top: 10px;
+	margin-top: 2%;
 }
 header nav ul{
 	margin: 0;
@@ -145,27 +145,37 @@ header nav ul li a:hover{
 	padding-bottom: 5%;
 	background: #fff;
 }
+.container-img1{
+	background-image: url('../image/banka10.jpg');
+	padding-top: 10%;
+	padding-bottom: 5%;
+	height: 100%;
+}
+.container-img2{
+	background-image: url('../image/banka11.jpg');
+	padding-top: 10%;
+	padding-bottom: 5%;
+	height: 100%;
+}
+.container-img3{
+	background-image: url('../image/banka4.jpg');
+	padding-top: 10%;
+	padding-bottom: 5%;
+}
 /*/////////////////////////*/
 /*Signup */
 
 .signup{
 	margin: auto;
 	width: 320px;
-	height: 420px;
+	height: 400px;
 	background-color: #000;
 	box-sizing: border-box;
-	padding: 5px;
+	padding: 10px;
 	border-radius: 2%;
 	margin-top: 7%;
+	padding: 1%;
 	
-}
-.avatar{
-	width: 50px;
-	height: 50px;
-	border-radius: 50%;
-	position: relative;
-	top: -25px;
-	left: calc(50% - 25px);
 }
 .signup h1{
 	margin:0;
@@ -177,13 +187,14 @@ header nav ul li a:hover{
 
 .signup p{
 	margin:0;
-	padding: 0;
+	padding: 2px;
 	font-weight: bold;
 }
 
 .signup input{
 	width: 100%;
 	margin-bottom: 10px;
+	padding: 2px;
 }
 .signup a{
 	color: darkgrey;
@@ -217,10 +228,19 @@ header nav ul li a:hover{
 
 /*/////////////////*/
 /*Admin Login*/
-.adminlogin, .userlogin{
+.adminlogin{
 	width: 100%;
-	height: 18%;
-	background-color: #fff;
+	height: 100%;
+	background-color: #3a4660;
+	box-sizing: border-box;
+	padding: 10px;
+	border-radius: 15px;
+	margin: auto;
+}
+.userlogin{
+	width: 100%;
+	height: 100%;
+	background-color: #3a4660;
 	box-sizing: border-box;
 	padding: 10px;
 	border-radius: 15px;
@@ -228,20 +248,20 @@ header nav ul li a:hover{
 }
 
 .staff2{
-	width: 45%;
-	height: 18%;
+	width: 50%;
+	height: 45%;
 	background-color: #379683;
 	box-sizing: border-box;
-	padding: 25px;
+	padding: 1%;
 	border-radius: 15px;
 	margin: auto;
 	margin-top: 5%;
 }
 .adminlogin h1, .userlogin h1{
-	color: #000;
+	color: #fff;
 	text-align: center;
 	font-size: 25px;
-	padding: 0 0 10px;
+	padding: 0 0 8px;
 	font-weight: normal;
 	font-family: sans-serif;
 	text-decoration: none;
@@ -250,24 +270,23 @@ header nav ul li a:hover{
 	margin:3px;
 	padding: 3px;
 	font-weight: bold;
-	text-transform: uppercase;
 	text-decoration: none;
-	color: #000;
+	color: #fff;
 	font-family: sans-serif;
 }
 
 .adminlogin input, .userlogin input{
 	width: 100%;
-	margin-bottom: 20px;
+	margin-bottom: 15px;
 }
 .adminlogin input[type="text"], .adminlogin input[type="E-mail"], .userlogin input[type="text"], .userlogin input[type="number"]{
 
     border:none;
-	border-bottom: 1px solid #000;
+	border-bottom: 1px solid #fff;
 	background:transparent;  
 	outline: none;
 	height: 20px;
-	color: #000;
+	color: #fff;
 	font-size: 14px;	
 
 }
@@ -275,7 +294,7 @@ header nav ul li a:hover{
 	border:none;
 	outline: none;
 	height: 20px;
-	background:grey;
+	background:#fff;
 	border-radius: 20px;
 }
 .adminlogin input[type="submit"]:hover, .userlogin input[type="submit"]:hover{
@@ -395,7 +414,7 @@ header nav ul li a:hover{
 /*Create Staff */
 
 .staff3{
-	width: 22%;
+	width: 30%;
 	margin: auto;
 	margin-top: 3%;
 	border-radius: 3%;
@@ -479,6 +498,7 @@ footer ul li a{
 	padding: 10px;
 	text-decoration: none;
 	color: #fff;
+	margin-right: 50%;
 	margin-left: 45%;
 }
 footer ul p{
@@ -528,7 +548,8 @@ footer ul hr{
 
 	.signup{
 
-		margin-top: 15%;
+		margin-top: 17%;
+		padding: 5px;
 	}
 
 	.staff2 {
@@ -547,5 +568,8 @@ footer ul hr{
 	}
 	.staff4{
 		margin-top: 15%;
+	}
+	footer ul li a{
+		right: 50%;
 	}
 }
