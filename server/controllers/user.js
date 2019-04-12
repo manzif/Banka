@@ -38,6 +38,24 @@ class User{
         res.status(201).json({ status: 201, data: users });
 
     }
+    signin(req,res){
+        const user = {
+            email: req.body.email,
+            password:req.body.password
+        };
+
+        const result = Validate.validateSignin(user);
+        if(result.error){
+            return res.status(400).json({ status: 400, error: result.error.details[0].message });
+        }
+
+        const findUser = users.find(c => c.email === user.email && c.password === user.password);
+
+        if(!findUser){
+            return res.status(400).json({ status: 400, error:'incorrect email or password' });
+        }
+        res.status(200).json({ status: 200, data: findUser });
+    }
 }
 
 export default new User();

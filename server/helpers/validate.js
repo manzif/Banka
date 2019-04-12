@@ -12,6 +12,13 @@ class Validate{
         };
         return Joi.validate(user, schema);
     }
+    validateSignin(user) {
+        const schema = {
+            email: Joi.string().required(),
+            password: Joi.string().required()
+        };
+        return Joi.validate(user, schema);
+    }
 
 }
 
