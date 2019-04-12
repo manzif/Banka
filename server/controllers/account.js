@@ -48,6 +48,16 @@ class Account{
         res.status(201).json({ status: 201, data: data });
 
     }
+    activate(req,res){
+        const account = accounts.find(c => c.accountNumber === parseInt(req.params.account_number));
+        if(!account) return res.status(400).json({ status: 400, error: 'Account requested is not available' });
+        account.status = 'active';
+        const data = {
+            accountNumber: account.accountNumber,
+            status: account.status
+        }
+        res.status(200).json({ status: 200, data: data});
+    }
 }
 
 

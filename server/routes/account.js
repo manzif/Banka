@@ -5,5 +5,6 @@ const router = express.Router();
 
 router.get('/api/v1/accounts', Account.getAll);
 router.post('/api/v1/accounts', Account.create);
+router.patch('/api/v1/accounts/:account_number/activate', Account.activate);
 
 export default router;
