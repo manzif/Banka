@@ -52,7 +52,7 @@ class User{
         const findUser = users.find(c => c.email === user.email && c.password === user.password);
 
         if(!findUser){
-            return res.status(400).json({ status: 400, error:'incorrect email or password' });
+            return res.status(404).json({ status: 404, error:'Incorrect email or password' });
         }
         res.status(200).json({ status: 200, data: findUser });
     }
