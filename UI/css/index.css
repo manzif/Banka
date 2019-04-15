@@ -279,7 +279,7 @@ header nav ul li a:hover{
 	width: 100%;
 	margin-bottom: 15px;
 }
-.adminlogin input[type="text"], .adminlogin input[type="E-mail"], .userlogin input[type="text"], .userlogin input[type="number"]{
+.adminlogin input[type="text"], .adminlogin input[type="password"], .userlogin input[type="text"], .userlogin input[type="password"]{
 
     border:none;
 	border-bottom: 1px solid #fff;
