@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --exit --compilers js:babel-core/register server/test/*",
+    "test": "nyc --reporter=html --reporter=text mocha ./test/*.js --require @babel/register  --timeout 5000 --exit",
     "start": "nodemon --exec babel-node index.js",
     "start-heroku": "nodemon --exec babel-node index.js",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
