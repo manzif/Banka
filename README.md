@@ -15,12 +15,17 @@ Andela Development challenge
 git clone https://github.com/manzif/Banka.git
 
 // To install required node modules
+
 npm init
 
+
 // Run server in development mode
+
 npm run server:start
 
+
 // Run server in production mode
+
 npm run start
 
 
