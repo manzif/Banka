@@ -5,9 +5,9 @@ import Validate from '../helpers/validate';
 
 const users = [
 
-    {id:1, email: 'manzif@gmail.com',  FirstName:'Manzi', LastName:'Fabrice',password:'password', Type: 'staff' , isAdmin:true },
-    {id:2, email: 'mbabazifly@gmail.com', FirstName:'Fly', LastName:'Mbabazi', password:'password', Type: 'Client' , isAdmin:false },
-    {id:3, email: 'irakozecarl@gmail.com', FirstName:'Carl', LastName:'Irakoze', password:'password', Type: 'Client', isAdmin:false },
+    {id:1, email: 'manzif@gmail.com',  firstName:'Manzi', lastName:'Fabrice',password:'password', type: 'staff' , isAdmin:true },
+    {id:2, email: 'mbabazifly@gmail.com', firstName:'Fly', lastName:'Mbabazi', password:'password', type: 'Client' , isAdmin:false },
+    {id:3, email: 'irakozecarl@gmail.com', firstName:'Carl', lastName:'Irakoze', password:'password', type: 'Client', isAdmin:false },
 ];
 
 
@@ -28,14 +28,19 @@ class User{
         const user = {
             id : users.length + 1,
             email: req.body.email ,
-            FirstName: req.body.FirstName,
-            LastName: req.body.LastName ,
+            firstName: req.body.firstName,
+            lastName: req.body.lastName ,
             password: req.body.password,
-            Type: 'client',
+            type: 'client',
             isAdmin: false
         };
+
+        const findUser = users.find(c => c.email === user.email);
+        if(findUser){
+            return res.status(400).json({ status: 400, error: "User already exist"});
+        };
         users.push(user);
-        res.status(201).json({ status: 201, data: users });
+        res.status(201).json({ status: 201, data: user });
 
     }
     signin(req,res){
