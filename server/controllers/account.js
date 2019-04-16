@@ -3,15 +3,15 @@ import Validate from '../helpers/validate';
 
 const accounts = [
 
-    {id:1, accountNumber: 23456546, createdOn:2019/9/12, user:1, Type: 'saving', status: 'draft', balance:234789789},
-    {id:2, accountNumber: 23454566, createdOn:2019/7/12, user:2, Type: 'current', status: 'active', balance:78855789},
-    {id:3, accountNumber: 23412346, createdOn:2019/2/12, user:3, Type: 'saving', status: 'draft', balance:2374567},  
+    {id:1, accountNumber: 23456546, createdOn:2019/9/12, user:1, type: 'saving', status: 'draft', balance:234789789},
+    {id:2, accountNumber: 23454566, createdOn:2019/7/12, user:2, type: 'current', status: 'active', balance:78855789},
+    {id:3, accountNumber: 23412346, createdOn:2019/2/12, user:3, type: 'saving', status: 'draft', balance:2374567},  
 ]
 const users = [
 
-    {id:1, email: 'manzif@gmail.com',  FirstName:'Manzi', LastName:'Fabrice',password:'password', Type: 'staff' , isAdmin:true },
-    {id:2, email: 'mbabazifly@gmail.com', FirstName:'Fly', LastName:'Mbabazi', password:'password', Type: 'Client' , isAdmin:false },
-    {id:3, email: 'irakozecarl@gmail.com', FirstName:'Carl', LastName:'Irakoze', password:'password', Type: 'Client', isAdmin:false },
+    {id:1, email: 'manzif@gmail.com',  firstName:'Manzi', lastName:'Fabrice',password:'password', type: 'staff' , isAdmin:true },
+    {id:2, email: 'mbabazifly@gmail.com', firstName:'Fly', lastName:'Mbabazi', password:'password', type: 'Client' , isAdmin:false },
+    {id:3, email: 'irakozecarl@gmail.com', firstName:'Carl', lastName:'Irakoze', password:'password', type: 'Client', isAdmin:false },
 ];
 
 class Account{
@@ -21,6 +21,11 @@ class Account{
         res.status(200).json({ status: 200, data: accounts });
     }
 
+    getAccount (req, res) {
+    const account = accounts.find(c => c.id === parseInt(req.params.id));
+        if(!account) return res.status(400).json({ status: 400, error: 'Account requested is not available' });
+        res.status(200).json({ status: 200, data: account });
+    }
     create(req,res){
         const result = Validate.validateAccount(req.body);
         if(result.error){
@@ -31,22 +36,29 @@ class Account{
             accountNumber: Math.floor((Math.random() * 80000000)+10000000 ),
             createdOn: new Date(),
             user:req.body.user,
-            Type: req.body.Type,
+            type: req.body.type,
+            email:req.body.email,
             status:'draft',
             balance: 0.0
         };
         accounts.push(account);
-         const findUser = users.find(c => c.id === account.user);
+         const findUser = users.find(c => c.email === account.email);
+         const findId = users.find(c => c.id === account.user);
+         if(!findUser){
+            return res.status(400).json({ status: 400, error:'please signup first'});
+         }
+         else if(findId){
+            return res.status(400).json({ status: 400, error:'That Id already have an account'});
+         }
          const data = {
             accountNumber: account.accountNumber,
-            FirstName: findUser.FirstName,
-            LastName: findUser.LastName,
-            email: findUser.email,
-            Type: account.Type,
+            firstName: findUser.firstName,
+            lastName: findUser.lastName,
+            email: account.email,
+            type: account.type,
             OpeningBalance: account.balance
          }
         res.status(201).json({ status: 201, data: data });
-
     }
     activate(req,res){
         const account = accounts.find(c => c.accountNumber === parseInt(req.params.account_number));

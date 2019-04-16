@@ -8,9 +8,9 @@ const accounts = [
 ]
 const users = [
 
-    {id:1, email: 'manzif@gmail.com',  FirstName:'Manzi', LastName:'Fabrice',password:'password', Type: 'staff' , isAdmin:true },
-    {id:2, email: 'mbabazifly@gmail.com', FirstName:'Fly', LastName:'Mbabazi', password:'password', Type: 'Cashier' , isAdmin:false },
-    {id:3, email: 'irakozecarl@gmail.com', FirstName:'Carl', LastName:'Irakoze', password:'password', Type: 'Client', isAdmin:false },
+    {id:1, email: 'manzif@gmail.com',  firstName:'Manzi', lastName:'Fabrice',password:'password', Type: 'staff' , isAdmin:true },
+    {id:2, email: 'mbabazifly@gmail.com', firstName:'Fly', lastName:'Mbabazi', password:'password', Type: 'Cashier' , isAdmin:false },
+    {id:3, email: 'irakozecarl@gmail.com', firstName:'Carl', lastName:'Irakoze', password:'password', Type: 'Client', isAdmin:false },
 ];
 
 const transactions = [

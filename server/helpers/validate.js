@@ -1,14 +1,15 @@
 
 import Joi from 'joi';
+import PasswordComplexity from 'joi-password-complexity'
 
 class Validate{
 
     validateSignup(user) {
         const schema = {
-            FirstName:Joi.string().required() ,
-            LastName:Joi.string().required(),
-            password: Joi.string().required(),
-            email: Joi.string().required(),
+            firstName:Joi.string().required() ,
+            lastName:Joi.string().required(),
+            password: Joi.string().min(8).max(25),
+            email: Joi.string().email({ minDomainAtoms: 2 })
         };
         return Joi.validate(user, schema);
     }
@@ -22,7 +23,8 @@ class Validate{
     validateAccount(user) {
         const schema = {
             user: Joi.number().integer().required(),
-            Type: Joi.string().required()
+            type: Joi.string().required(),
+            email: Joi.string().email({ minDomainAtoms: 2 }).required()
         };
         return Joi.validate(user, schema);
     }
