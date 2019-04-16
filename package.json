@@ -4,10 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "nyc --reporter=html --reporter=text mocha ./test/*.js --require @babel/register  --timeout 5000 --exit",
-    "start": "nodemon --exec babel-node index.js",
-    "start-heroku": "nodemon --exec babel-node index.js",
-    "coverage": "nyc report --reporter=text-lcov | coveralls"
+    "test": "nyc --reporter=html --reporter=text mocha ./server/test/*.js --require @babel/register  --timeout 5000 --exit",
+    "server:start": "nodemon --exec babel-node ./server/index.js",
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "clean": "rm -rf build && mkdir build",
+    "compile": "./node_modules/.bin/babel ./server -d ./build",
+    "build": "npm run clean && npm run compile",
+    "start": "node build/index.js"
   },
   "author": "ME",
   "license": "ISC",
