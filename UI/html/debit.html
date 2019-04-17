@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>Debit Account</title>
+	<link rel="stylesheet" type="text/css" href="../css/index.css">
+    <link rel="stylesheet" type="text/css" href="../fontawesome-free/css/all.min.css">
+</head>
+<body>
+	<header>
+		<div class="logo"><span class="highlight">Debit</span> Account</div>
+		<nav>
+			<ul>
+				<li><a href="./cashier.html">Cashier</a></li>
+			</ul>
+		</nav>
+		<div class="menu-toggle">
+			<i class="fa fa-bars"></i>
+		</div>
+	</header>
+
+    <div class="container container-bgcolor">
+    	<div class="staff2">
+    	    <div class="adminlogin">
+    		    <h1>Debit Account</h1>
+    		       <form id="for">
+				        <p>Account Number</p>
+				       <input type="number" name="Account Number">
+				       <p>Amount</p>
+				       <input type="number" name="Amount">
+				       <button id="button7">Save</button>
+			       </form>	
+    	    </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+			document.getElementsByClassName('menu-toggle')[0].onclick = function () {
+				document.getElementsByTagName('nav')[0].classList.toggle('active');
+			}
+    </script>
+    <footer>
+		   <ul class="Usefull">
+		      <li><a href="adminlogin.html">Administration</a></li>
+		      <hr>
+		      <li><p align="center">Welcome to Banka, copyright &copy;2019</p></li>
+		   </ul>
+    </footer>
+</body>
+
+</html>
