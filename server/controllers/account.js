@@ -16,8 +16,7 @@ const users = [
 
 class Account{
 
-    getAll(req,res){
-         
+    getAll(req,res){   
         res.status(200).json({ status: 200, data: accounts });
     }
 
@@ -26,35 +25,35 @@ class Account{
         if(!account) return res.status(400).json({ status: 400, error: 'Account requested is not available' });
         res.status(200).json({ status: 200, data: account });
     }
+
     create(req,res){
         const result = Validate.validateAccount(req.body);
         if(result.error){
             return res.status(400).json({ status: 400, error: result.error.details[0].message });
         }
         const account = {
-            id : users.length + 1,
+            id : accounts.length + 1,
             accountNumber: Math.floor((Math.random() * 80000000)+10000000 ),
             createdOn: new Date(),
             user:req.body.user,
             type: req.body.type,
-            email:req.body.email,
             status:'draft',
             balance: 0.0
         };
         accounts.push(account);
-         const findUser = users.find(c => c.email === account.email);
+         //const findUser = users.find(c => c.email === account.email);
          const findId = users.find(c => c.id === account.user);
-         if(!findUser){
+         if(!findId){
             return res.status(400).json({ status: 400, error:'please signup first'});
          }
-         else if(findId){
-            return res.status(400).json({ status: 400, error:'That Id already have an account'});
-         }
+         /*else if(findId){
+            return res.status(400).json({ status: 400, error:'This Id already have an account'});
+         }*/
          const data = {
+            id:account.id, 
             accountNumber: account.accountNumber,
-            firstName: findUser.firstName,
-            lastName: findUser.lastName,
-            email: account.email,
+            firstName: findId.firstName,
+            lastName: findId.lastName,
             type: account.type,
             OpeningBalance: account.balance
          }
