@@ -290,6 +290,12 @@ header nav ul li a:hover{
 	font-size: 14px;	
 
 }
+.adminlogin #for input[type="number"]{
+	height: 20px;
+	color: #000;
+	border-radius: 4%;
+}
+
 .adminlogin input[type="submit"], .userlogin input[type="submit"]{
 	border:none;
 	outline: none;
@@ -459,7 +465,23 @@ header nav ul li a:hover{
 	margin-left: 5px;
 	cursor: pointer;
 }
+#button7{
+	height: 35px;
+	background-color: #fff;
+	color: #000;
+	border: 0;
+	padding-left: 20px;
+	padding-right: 20px;
+	margin-bottom: 5px;
+	margin-left: 5px;
+	cursor: pointer;
+}
 #button1:hover{
+	cursor: pointer;
+	background-color: #379683;
+
+}
+#button7:hover{
 	cursor: pointer;
 	background-color: #379683;
 
@@ -553,13 +575,13 @@ footer ul hr{
 	}
 
 	.staff2 {
-		margin-top: 15%;
+		margin-top: 17%;
 		width: 60%;
 	}
 
 	.staff1 {
-		margin-top: 13%;
-		width: 50%;
+		margin-top: 18%;
+		width: 60%;
 	}
 
 	.staff3 {
@@ -569,7 +591,13 @@ footer ul hr{
 	.staff4{
 		margin-top: 15%;
 	}
+	.staff7{
+		margin-top: 15%;
+	}
 	footer ul li a{
 		right: 50%;
+	}
+	.allaccount{
+		margin-top: 10%;
 	}
 }
