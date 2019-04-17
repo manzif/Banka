@@ -8,7 +8,7 @@ class Validate{
         const schema = {
             firstName:Joi.string().required() ,
             lastName:Joi.string().required(),
-            password: Joi.string().regex(/^[a-zA-Z0-9]{6,16}$/).min(8).required(),
+            password: Joi.string().regex(/^[a-zA-Z0-9]{6,16}$/).min(8).required().options({language:{string:{regex:{base:'Your password is not Strong enough!!Try Again'}}}}),
             email: Joi.string().email({ minDomainAtoms: 2 })
         };
         return Joi.validate(user, schema);
