@@ -16,7 +16,12 @@ app.get('/', function(req, res){
     res.send('Hello world');
 
 });
-
+app.get('*', function(req, res){
+    res.status(404).json({ status: 404, message: 'Page not found' });
+});
+app.get('text/plain', function(req, res){
+    res.status(404).json({ status: 404, message: 'Page not found' });
+});
 
 //port
 const port = process.env.PORT || 5000;

@@ -24,7 +24,7 @@ class Validate{
         const schema = {
             user: Joi.number().integer().required(),
             type: Joi.string().required(),
-            email: Joi.string().email({ minDomainAtoms: 2 }).required()
+            email: Joi.string().email({ minDomainAtoms: 2 })
         };
         return Joi.validate(user, schema);
     }
