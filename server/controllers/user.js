@@ -1,22 +1,14 @@
 
 import Validate from '../helpers/validate';
 
-
-
-const users = [
-
-    {id:1, email: 'manzif@gmail.com',  firstName:'Manzi', lastName:'Fabrice',password:'password', type: 'staff' , isAdmin:true },
-    {id:2, email: 'mbabazifly@gmail.com', firstName:'Fly', lastName:'Mbabazi', password:'password', type: 'Client' , isAdmin:false },
-    {id:3, email: 'irakozecarl@gmail.com', firstName:'Carl', lastName:'Irakoze', password:'password', type: 'Client', isAdmin:false },
-];
-
+import Arrays from '../arrays/arrays';
 
 
 class User{
 
       getAll(req,res){
          
-        res.status(200).json({ status: 200, data: users });
+        res.status(200).json({ status: 200, data: Arrays.users});
     }
 
 
@@ -26,7 +18,7 @@ class User{
             return res.status(400).json({ status: 400, error: result.error.details[0].message });
         }
         const user = {
-            id : users.length + 1,
+            id : Arrays.users.length + 1,
             email: req.body.email ,
             firstName: req.body.firstName,
             lastName: req.body.lastName ,
@@ -35,11 +27,11 @@ class User{
             isAdmin: false
         };
 
-        const findUser = users.find(c => c.email === user.email);
+        const findUser = Arrays.users.find(c => c.email === user.email);
         if(findUser){
             return res.status(400).json({ status: 400, error: "User already exist"});
         };
-        users.push(user);
+        Arrays.users.push(user);
         res.status(201).json({ status: 201, data: user });
 
     }
@@ -54,7 +46,7 @@ class User{
             return res.status(400).json({ status: 400, error: result.error.details[0].message });
         }
 
-        const findUser = users.find(c => c.email === user.email && c.password === user.password);
+        const findUser = Arrays.users.find(c => c.email === req.body.email && c.password === req.body.password);
 
         if(!findUser){
             return res.status(404).json({ status: 404, error:'Incorrect email or password' });

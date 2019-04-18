@@ -1,23 +1,5 @@
 import Validate from '../helpers/validate';
-
-const accounts = [
-
-    {id:1, accountNumber: 23456546, createdOn:2019/9/12, user:1, Type: 'saving', status: 'draft', balance:12000},
-    {id:2, accountNumber: 23454566, createdOn:2019/7/12, user:2, Type: 'current', status: 'active', balance:40000},
-    {id:3, accountNumber: 23412346, createdOn:2019/2/12, user:3, Type: 'saving', status: 'draft', balance:23000},  
-]
-const users = [
-
-    {id:1, email: 'manzif@gmail.com',  firstName:'Manzi', lastName:'Fabrice',password:'password', Type: 'staff' , isAdmin:true },
-    {id:2, email: 'mbabazifly@gmail.com', firstName:'Fly', lastName:'Mbabazi', password:'password', Type: 'Cashier' , isAdmin:false },
-    {id:3, email: 'irakozecarl@gmail.com', firstName:'Carl', lastName:'Irakoze', password:'password', Type: 'Client', isAdmin:false },
-];
-
-const transactions = [
-    {id:1, createdOn:2019/9/12, accountNumber: 23412346,  cashier:2, amount:23000, oldBalance: 23000, newBalance: 26000 },
-    {id:2, createdOn:2019/9/12, accountNumber: 23454566,  cashier:2, amount:20000, oldBalance: 40000, newBalance: 20000 },
-    {id:3, createdOn:2019/9/12, accountNumber: 23412346,  cashier:2, amount:20000, oldBalance: 120000, newBalance: 100000 },
-];
+import Arrays from '../arrays/arrays';
 
 
 
@@ -25,7 +7,7 @@ const transactions = [
 class Transaction{
 
     getAll(req,res){     
-        res.status(200).json({ status: 200, data: transactions });
+        res.status(200).json({ status: 200, data: Arrays.transactions });
     }
 
      debit(req,res){
@@ -38,9 +20,11 @@ class Transaction{
         if(result.error){
             return res.status(400).json({ status: 400, error: result.error.details[0].message });
         }
+       const cashiers =[{cashier:1, names: 'Felix' }, {cashier:2, names: 'Niyo' }];
 
-        const findAccount = accounts.find(c => c.accountNumber === parseInt(req.params.account_number));
-        const findCashier = users.find(c => c.id === req.body.cashier && c.Type === 'Cashier');
+        const findAccount = Arrays.accounts.find(c => c.accountNumber === parseInt(req.params.account_number));
+        const findCashier = cashiers.find(c => c.cashier === req.body.cashier);
+        console.log(findCashier)
         if (!findAccount){
             return res.status(400).json({ status: 400, error: 'Account not found' });
         }
