@@ -9,3 +9,4 @@ router.post('/api/v1/auth/signup', User.signup);
 router.post('/api/v1/auth/signin', User.signin);
 
 export default router;
+

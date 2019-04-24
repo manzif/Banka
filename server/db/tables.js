@@ -1,5 +1,5 @@
 
-//Creating Tables
+
 const pool = require('./index')
 
 const connect = async () => await pool.connect();
@@ -44,7 +44,7 @@ const createTables = async () => {
     connection.release();
   };
   
-  // Drop Tables
+  
 
   const dropTables = async () => {
     const dropAlltables = 'DROP TABLE IF EXISTS users CASCADE';

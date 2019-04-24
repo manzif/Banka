@@ -9,8 +9,8 @@ class Account{
 
 async getAll(req,res){
     const user = req.user;
-		if(!user.isAdmin){
-			return res.send({ message: 'You are not admin'});
+		if(user.type == 'client'){
+			return res.send({ message: 'You are not admin or a cashier'});
 		}
     try {
         const { rows } = await db.query(myqueries.getAll);
@@ -27,6 +27,10 @@ async getAll(req,res){
 }
 
 async getAccountDetails(req, res){
+    const user = req.user;
+		if(user.type == 'client'){
+			return res.send({ message: 'You are not admin or a cashier'});
+		}
 try {
     const {rows} = await db.query(myqueries.getAccountDetails, [req.params.account_number]);
     return res.status(200).send({
@@ -41,6 +45,10 @@ try {
 }
 }
 async getActiveAccount(req, res){
+    const user = req.user;
+		if(user.type == 'client'){
+			return res.send({ message: 'You are not admin or a cashier'});
+		}
     try {
         const {rows} = await db.query(myqueries.getActiveAccount, [req.params.status]);
         return res.status(200).json({
@@ -158,26 +166,24 @@ async delete(req, res){
        }) 
     }
 }
-
-    // getAccountId (req, res) {
-        
-    //     const values1 = [req.params.email];
-    //     const query = myqueries.getAccountId;
-    
-    //     pool.connect((error, client, done) => {
-    //         if (error) throw error;
-    //         client.query(query, values1, (err,result) => {
-    //             done();
-    //             if (err){
-    //                return res.status(400).json({ status: 400, error: err.detail });
-                   
-    //             }
-                
-    //             res.status(200).json({ status: 200, data: result.rows});
-    //         });
-    //     }); 
-   
-    // }
+async getAccountId(req, res){
+    const user = req.user;
+		if(user.type == 'client'){
+			return res.send({ message: 'You are not admin or a cashier'});
+		}
+	try {
+		const {rows} = await db.query(myqueries.getAccountId, [req.params.email]);
+		return res.status(200).json({
+			status: 200,
+			data: rows
+		})
+	} catch (error) {
+		return res.status(500).json({
+			status:500,
+			error
+		})
+	}
+}	
 }
 
 

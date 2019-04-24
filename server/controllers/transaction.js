@@ -38,35 +38,21 @@ async getOneTransaction(req, res){
 	}
 }	
 
+async getOneTransactionId(req, res){
+	try {
+		const {rows} = await db.query(myqueries.getOneTransactionId, [req.params.id]);
+		return res.status(200).json({
+			status: 200,
+			data: rows
+		})
+	} catch (error) {
+		return res.status(500).json({
+			status:500,
+			error
+		})
+	}
+}	
 
-	// getOneTransaction(req,res){     
-	//     const query = myqueries.getOneTransaction;
-	//     const values = [req.params.account_number];
-	//     pool.connect((error, client, done) => {
-	//         if (error) throw error;
-	//         client.query(query, values, (err,result) => {
-	//             done();
-	//             if (err){
-	//                return res.status(400).json({ status: 400, error: err.detail });
-	//             }
-	//             res.status(200).json({ status: 200, data: result.rows});
-	//         });
-	//     }); 
-	// }
-	// getOneTransactionId(req,res){     
-	//     const query = myqueries.getOneTransactionId;
-	//     const values = [req.params.id];
-	//     pool.connect((error, client, done) => {
-	//         if (error) throw error;
-	//         client.query(query, values, (err,result) => {
-	//             done();
-	//             if (err){
-	//                return res.status(400).json({ status: 400, error: err.detail });
-	//             }
-	//             res.status(200).json({ status: 200, data: result.rows});
-	//         });
-	//     }); 
-	// }
 	async debit(req, res) {
 		const user = req.user;
 		if(user.type != 'cashier'){

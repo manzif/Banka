@@ -27,22 +27,21 @@ export default  {
  signup,
  getAllUsers,
  getOne,
-
+ signin,
  //Account queries
  getAll,
  createAccount,
  getAccountNumber,
  activate,
  deleteAccount,
+ 
+
+ //transactions queries
  getAllTransaction,
  createTransaction,
  getCashier,
  updateBalance,
  getOneTransaction,
- getOneTransactionId,
- getAccountId,
- getAccountDetails,
- getActiveAccount,
- getEmail,
- signin
+ getOneTransactionId
+ 
 }

@@ -99,3 +99,4 @@ async signup(req, res){
 
 }
 export default new User();
+

@@ -38,3 +38,4 @@ class Validate{
 }
 
 export default new Validate();
+
