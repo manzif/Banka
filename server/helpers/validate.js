@@ -29,7 +29,7 @@ class Validate{
     validateTransaction(user) {
         const schema = {
             accountnumber: Joi.number().integer().required(),
-            cashier: Joi.number().integer().required(),
+            cashier: Joi.number().integer(),
             amount: Joi.number().integer().required()
         };
         return Joi.validate(user, schema);

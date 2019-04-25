@@ -14,7 +14,6 @@ app.use(transactionRoutes);
 
 app.get('/', function(req, res){
     res.send('Hello world');
-
 });
 app.get('*', function(req, res){
     res.status(404).json({ status: 404, message: 'Page not found' });
@@ -36,3 +35,4 @@ app.listen(port, function(){
 });
 
 export default app;
+
