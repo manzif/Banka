@@ -3,12 +3,14 @@ const signin = 'SELECT * FROM users WHERE email = $1';
 const getAllUsers = 'SELECT * FROM users';
 const getOne = 'SELECT * FROM users WHERE id = $1';
 const getEmail = 'SELECT * FROM users WHERE email = $1';
+const deleteUser = 'DELETE FROM users WHERE id = $1 RETURNING *';
 
 
 const getAccountNumber = 'SELECT * FROM accounts WHERE accountnumber = $1';
 const getAccountId = 'SELECT accounts.* FROM accounts,users WHERE accounts.owner = users.id AND users.email= $1';
 const getAccountDetails = 'SELECT * FROM accounts WHERE accountnumber = $1';
-const getActiveAccount = 'SELECT * FROM accounts WHERE status = $1';
+const getActiveAccount = 'SELECT * FROM accounts WHERE status = "active" ';
+const getOneAccount = 'SELECT * FROM accounts WHERE id = $1';
 
 const activate = 'UPDATE accounts SET status = $1 WHERE accountnumber = $2 RETURNING *';
 const deleteAccount = 'DELETE FROM accounts WHERE accountnumber = $1 RETURNING *';
@@ -28,12 +30,18 @@ export default  {
  getAllUsers,
  getOne,
  signin,
+ deleteUser,
  //Account queries
  getAll,
  createAccount,
  getAccountNumber,
  activate,
  deleteAccount,
+ getActiveAccount,
+ getAccountDetails,
+ getAccountId,
+ getEmail,
+ getOneAccount,
  
 
  //transactions queries

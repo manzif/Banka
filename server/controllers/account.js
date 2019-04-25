@@ -26,13 +26,36 @@ async getAll(req,res){
     }
 }
 
+async getOneAccount(req,res){
+    const user = req.user;
+		if(user.type == 'client'){
+			return res.send({ message: 'You are not admin or a cashier'});
+		}
+    try {
+        const { rows, rowCount } = await db.query(myqueries.getOneAccount, [req.params.id]);
+        if(rowCount == 0)
+        return res.status(400).json({ status: 400, error: 'Account does not exist Please check your id try Again!!' });
+        return res.status(200).json({
+            status: 200,
+            data: rows,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            status: 500,
+            error
+        })
+    }
+}
+
 async getAccountDetails(req, res){
     const user = req.user;
 		if(user.type == 'client'){
 			return res.send({ message: 'You are not admin or a cashier'});
 		}
 try {
-    const {rows} = await db.query(myqueries.getAccountDetails, [req.params.account_number]);
+    const {rows, rowCount} = await db.query(myqueries.getAccountDetails, [req.params.account_number]);
+    if(rowCount == 0)
+    return res.status(400).json({ status: 400, error: 'Account does not exist Please check your account number try Again!!' });
     return res.status(200).send({
         status: 200,
         data:rows,
@@ -44,24 +67,29 @@ try {
     })
 }
 }
-async getActiveAccount(req, res){
+
+async getActiveAccount(req,res){
     const user = req.user;
 		if(user.type == 'client'){
 			return res.send({ message: 'You are not admin or a cashier'});
 		}
     try {
-        const {rows} = await db.query(myqueries.getActiveAccount, [req.params.status]);
+        
+        const { rows, rowCount } = await db.query(myqueries.getActiveAccount, [req.query.status]);
+        if(rowCount == 0)
+        return res.status(400).json({ status: 400, error: 'Account does not exist Please check your id try Again!!' });
         return res.status(200).json({
             status: 200,
-            data: rows
-        })
+            data: rows,
+        });
     } catch (error) {
         return res.status(500).json({
-            status:500,
-            errror
+            status: 500,
+            error
         })
     }
 }
+
 async create (req, res){
     const result = Validate.validateAccount(req.body);
         if(result.error){
@@ -105,6 +133,8 @@ async activate(req,res){
         const account = await db.query(myqueries.getAccountNumber, [req.params.account_number])
         if(account.rowCount == 0)
         return res.status(400).json({ status: 400, error: 'Account does not exist' });
+        if(account.rows[0].status === 'active')
+        return res.status(400).json({ status: 400, error: 'Account is already activated ' });
         const {rows} = await db.query(myqueries.activate, values1);
         return res.status(200).json({
             status:200,
@@ -171,8 +201,10 @@ async getAccountId(req, res){
 		if(user.type == 'client'){
 			return res.send({ message: 'You are not admin or a cashier'});
 		}
-	try {
-		const {rows} = await db.query(myqueries.getAccountId, [req.params.email]);
+	try{
+        const {rows, rowCount } = await db.query(myqueries.getAccountId, [req.params.email]);
+        if(rowCount == 0)
+        return res.status(400).json({ status: 400, error: 'User does not exist Please try Again' });
 		return res.status(200).json({
 			status: 200,
 			data: rows
