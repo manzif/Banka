@@ -1,57 +1,102 @@
 
 import Validate from '../helpers/validate';
+import db from '../db/index';
+import myqueries from '../db/myqueries';
+import auth from '../middleware/authent';
+import helper from '../helpers/password';
 
-import Arrays from '../arrays/arrays';
+
+class User {
 
 
-class User{
-
-    getAllUser(req,res){
-         
-        res.status(200).json({ status: 200, data: Arrays.users});
+    async getAllUser(req, res){
+        try {
+            const { rows } = await db.query(myqueries.getAllUsers);
+            return res.status(200).json({
+                status: 200,
+                data: rows,
+            });
+        } catch (error) {
+            return res.status(500).json({
+                status: 500,
+                error
+            })
+        }
     }
 
-    signup(req,res){
-        const result = Validate.validateSignup(req.body);
-        if(result.error){
+async getUser(req,res){
+    try {
+        const {rows} = await db.query(myqueries.getOne, [parseInt(req.params.id)]);
+        return res.status(200).json({
+            status:200,
+            data:rows
+        })
+    } catch (error) {
+        return res.status(500).json({
+            status:500,
+            error
+        })
+    }
+}
+
+async signup(req, res){
+    const result = Validate.validateSignup(req.body);
+        if (result.error) {
             return res.status(400).json({ status: 400, error: result.error.details[0].message });
         }
         const user = {
-            id : Arrays.users.length + 1,
-            email: req.body.email.toLowerCase(),
-            firstName: req.body.firstName,
-            lastName: req.body.lastName ,
-            password: req.body.password,
-            type: 'client',
-            isAdmin: false
-        };
-
-        const findUser = Arrays.users.find(user => user.email === user.email);
-        if(findUser){
-            return res.status(400).json({ status: 400, error: "User already exist"});
-        };
-        Arrays.users.push(user);
-        res.status(201).json({ status: 201, data: user });
-
-    }
-    signin(req,res){
-        const user = {
-            email: req.body.email.toLowerCase(),
-            password:req.body.password
-        };
-
-        const result = Validate.validateSignin(user);
-        if(result.error){
-            return res.status(400).json({ status: 400, error: result.error.details[0].message });
+                    firstname: req.body.firstname,
+                    lastname: req.body.lastname,
+                    email: req.body.email.toLowerCase(),
+                    password: req.body.password,
+                    type: 'client'
+        
+                };
+        const hash = helper.hashPasword(user.password);
+        const values = [user.firstname, user.lastname, user.email, hash, user.type];
+        try {
+            const {rows} = await db.query(myqueries.signup, values);
+            return res.status(200).json({
+                status:200,
+                data:rows
+            })
+        } catch (error) {
+            return res.status(500).json({
+                status:500,
+                error
+            })
         }
 
-        const findUser = Arrays.users.find(user => user.email === req.body.email.toLowerCase() && user.password === req.body.password);
+}
 
-        if(!findUser){
-            return res.status(404).json({ status: 404, error:'Incorrect email or password' });
+    async signin(req, res) {
+        const values = [req.body.email.toLowerCase()]
+
+        try {
+            const user = await db.query(myqueries.signin, values);
+            if (user.rowCount == 0) {
+                return res.status(400).json({ status: 400, error: 'No account found' });
+            }
+
+            if (helper.comparePassword(req.body.password, user.rows[0].password)) {
+                const payload = { id: user.rows[0].id, isAdmin: user.rows[0].is_admin, type: user.rows[0].type };
+                console.log(payload)
+                const token = auth.generateToken(payload);
+                res.status(200).json({ status: 200, token, data: user.rows });
+            }
+            return res.status(400).json({
+                status: 400,
+                message: 'Incorrect username or password'
+            });
+        } catch (error) {
+            console.log(error)
+            return res.status(400).json({
+                status: 400,
+                error,
+            });
         }
-        res.status(200).json({ status: 200, data: findUser });
     }
 
 }
 export default new User();
+

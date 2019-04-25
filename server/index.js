@@ -29,7 +29,7 @@ app.post('text/plain', function(req, res){
     res.status(404).json({ status: 404, message: 'Page not found' });
 });
 
-//port
+
 const port = process.env.PORT || 5000;
 app.listen(port, function(){
     console.log(`listening on port ${port}...`);
