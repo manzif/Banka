@@ -1,6 +1,7 @@
 import Validate from '../helpers/validate';
 import db from '../db/index';
 import myqueries from '../db/myqueries';
+import AccountModels from '../models/accounts';
 
 
 
@@ -13,7 +14,7 @@ async getAll(req,res){
 			return res.send({ message: 'You are not admin or a cashier'});
 		}
     try {
-        const { rows } = await db.query(myqueries.getAll);
+        const  {rows}  = await AccountModels.getAll();
         return res.status(200).json({
             status: 200,
             data: rows,
@@ -32,9 +33,11 @@ async getOneAccount(req,res){
 			return res.send({ message: 'You are not admin or a cashier'});
 		}
     try {
-        const { rows, rowCount } = await db.query(myqueries.getOneAccount, [req.params.id]);
+        const id = parseInt(req.params.id) ;
+        const {rows, rowCount}= await AccountModels.getOneAccount(id);
+
         if(rowCount == 0)
-        return res.status(400).json({ status: 400, error: 'Account does not exist Please check your id try Again!!' });
+        return res.status(400).json({ status: 400, error: 'Account does not exist Please check your id and try Again!!' });
         return res.status(200).json({
             status: 200,
             data: rows,
@@ -53,9 +56,10 @@ async getAccountDetails(req, res){
 			return res.send({ message: 'You are not admin or a cashier'});
 		}
 try {
-    const {rows, rowCount} = await db.query(myqueries.getAccountDetails, [req.params.account_number]);
+    const value = parseInt(req.params.account_number);
+    const {rows, rowCount} = await AccountModels.getAccountDetails(value);
     if(rowCount == 0)
-    return res.status(400).json({ status: 400, error: 'Account does not exist Please check your account number try Again!!' });
+    return res.status(400).json({ status: 400, error: 'Account requested is not available Please check the account number and try Again!!' });
     return res.status(200).send({
         status: 200,
         data:rows,
@@ -74,10 +78,8 @@ async getActiveAccount(req,res){
 			return res.send({ message: 'You are not admin or a cashier'});
 		}
     try {
-        
-        const { rows, rowCount } = await db.query(myqueries.getActiveAccount, [req.query.status]);
-        if(rowCount == 0)
-        return res.status(400).json({ status: 400, error: 'Account does not exist Please check your id try Again!!' });
+        const active = req.query.status;
+        const { rows } = await AccountModels.getActiveAccount(active);
         return res.status(200).json({
             status: 200,
             data: rows,
@@ -106,11 +108,11 @@ async create (req, res){
        const values =[account.accountnumber, account.createdon, account.owner, account.type, account.status, account.balance]
 
        try {
-           const user = await db.query(myqueries.getOne, [account.owner]);
+           const user = await AccountModels.AccountOwner(account.owner);
            if(user.rowCount == 0){
             return res.status(400).json({ status: 400, error: 'Please signup first' });
            }
-           const {rows} = await db.query(myqueries.createAccount, values);
+           const {rows} = await AccountModels.createAccount(values);
            return res.status(200).json({
                status:200,
                data:rows
@@ -127,15 +129,17 @@ async activate(req,res){
 		if(!user.isAdmin){
 			return res.send({ message: 'You are not admin'});
 		}
-    const values1 = ['active', req.params.account_number];
+    
 
     try {
-        const account = await db.query(myqueries.getAccountNumber, [req.params.account_number])
+        const values = ['active', parseInt(req.params.account_number)];
+        const accountnumber = req.params.account_number;
+        const account = await AccountModels.getAccountNumber(accountnumber)
         if(account.rowCount == 0)
         return res.status(400).json({ status: 400, error: 'Account does not exist' });
         if(account.rows[0].status === 'active')
         return res.status(400).json({ status: 400, error: 'Account is already activated ' });
-        const {rows} = await db.query(myqueries.activate, values1);
+        const {rows} = await AccountModels.activate2(values)
         return res.status(200).json({
             status:200,
             data:rows
@@ -154,15 +158,16 @@ async deactivate(req, res){
 		if(!user.isAdmin){
 			return res.send({ message: 'You are not admin'});
 		}
-    const values1 = ['dormant', req.params.account_number];
+    const values = ['dormant', req.params.account_number];
 
     try {
-        const account = await db.query(myqueries.getAccountNumber, [req.params.account_number])
+        const accountnumber = req.params.account_number;
+        const account = await AccountModels.getAccountNumber(accountnumber);
         if(account.rowCount == 0)
         return res.status(400).json({ status: 400, error: 'Account does not exist' });
         if(account.rows[0].status === 'dormant')
         return res.status(400).json({ status: 400, error: 'Account is already Deactivated ' });
-        const {rows} = await db.query(myqueries.activate, values1);
+        const {rows} = await AccountModels.deactivateAccount(values);
         return res.status(200).json({
             status:200,
             data:rows
@@ -181,10 +186,11 @@ async delete(req, res){
 			return res.send({ message: 'You are not admin'});
 		}
     try {
-        const account = await db.query(myqueries.getAccountNumber, [req.params.account_number])
+        const value = req.params.account_number;
+        const account = await AccountModels.getAccountNumber(value);
         if(account.rowCount == 0)
         return res.status(400).json({ status: 400, error: 'Account does not exist' });
-        const {rows} = await db.query(myqueries.deleteAccount, [req.params.account_number]);
+        const {rows} = await AccountModels.deleteAccount(value);
         return res.status(200).json({
             status:200,
             message:'Account successfuly deleted'
@@ -202,7 +208,9 @@ async getAccountId(req, res){
 			return res.send({ message: 'You are not admin or a cashier'});
 		}
 	try{
-        const {rows, rowCount } = await db.query(myqueries.getAccountId, [req.params.email]);
+        const email = req.params.email;
+        const {rows, rowCount } = await AccountModels.getAccountId(email);
+
         if(rowCount == 0)
         return res.status(400).json({ status: 400, error: 'User does not exist Please try Again' });
 		return res.status(200).json({
@@ -214,7 +222,7 @@ async getAccountId(req, res){
 			status:500,
 			error
 		})
-	}
+    }
 }	
 }
 

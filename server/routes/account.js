@@ -5,10 +5,10 @@ import auth  from '../middleware/authent';
 const router = express.Router();
 
 router.get('/api/v1/accounts', auth.verifyToken, Account.getAll);
-router.get('/api/v1/accounts/:id', auth.verifyToken, Account.getOneAccount);
+router.get('/api/v1/accounts/one/:id', auth.verifyToken, Account.getOneAccount);
 router.post('/api/v1/accounts', Account.create);
 router.get('/api/v1/user/:email/accounts',auth.verifyToken, Account.getAccountId);
-router.get('/api/v1//accounts?status=:status',auth.verifyToken, Account.getActiveAccount);
+router.get('/api/v1//accounts?status=active',auth.verifyToken, Account.getActiveAccount);
 router.get('/api/v1/accounts/:account_number', auth.verifyToken, Account.getAccountDetails);
 router.patch('/api/v1/accounts/:account_number/activate',auth.verifyToken, Account.activate);
 router.patch('/api/v1/accounts/:account_number/deactivate',auth.verifyToken, Account.deactivate);
