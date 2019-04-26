@@ -1,9 +1,9 @@
 import myqueries from '../db/myqueries';
-import db from '../db/index';
+import index from '../db/index';
 import { stat } from 'fs';
 
 
-
+const db = index.runQuery;
 
 
 class AccountModels{
@@ -11,6 +11,11 @@ class AccountModels{
 // get all account 
 
   async getAll(){
+    // // const status = req.query.status;
+    // // const query = myqueries.getAll + " WHERE status =' "+ status +"'";
+    // // if(status){
+
+    // }
      const getAll = await db.query(myqueries.getAll);
      return getAll;
   }
@@ -82,8 +87,8 @@ async activate2(value1){
 
 // Get activate 
 
-async getActiveAccount(active){
-    const getActiveAccount = await db.query(myqueries.getActiveAccount, [active]);
+async getActiveAccount(status){
+    const getActiveAccount = await db.query(myqueries.getActiveAccount, [status]);
     return getActiveAccount;
 }
 

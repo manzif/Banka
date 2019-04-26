@@ -1,5 +1,7 @@
 import myqueries from '../db/myqueries';
-import db from '../db/index';
+import index from '../db/index';
+
+const db = index.runQuery;
 
 class UserModels{
 

@@ -24,6 +24,9 @@ const createTransaction = 'INSERT INTO transactions(createdon, type, accountnumb
 const getOneTransaction = 'SELECT * FROM transactions WHERE accountnumber = $1';
 const getOneTransactionId = 'SELECT * FROM transactions WHERE id = $1';
 
+const deleteAllUsers = 'DELETE FROM users';
+const makeUserAdmin = 'UPDATE users SET is_admin = $1,type=$2 WHERE email = $3';
+
 export default  {
  //User queries   
  signup,
@@ -42,6 +45,7 @@ export default  {
  getAccountId,
  getEmail,
  getOneAccount,
+ makeUserAdmin,
  
 
  //transactions queries
@@ -50,6 +54,7 @@ export default  {
  getCashier,
  updateBalance,
  getOneTransaction,
- getOneTransactionId
+ getOneTransactionId,
+ deleteAllUsers
  
 }

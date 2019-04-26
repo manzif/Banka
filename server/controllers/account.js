@@ -1,14 +1,16 @@
 import Validate from '../helpers/validate';
-import db from '../db/index';
+import index from '../db/index';
 import myqueries from '../db/myqueries';
 import AccountModels from '../models/accounts';
+import { stat } from 'fs';
 
-
+const db = index.runQuery;
 
 
 class Account{
 
 async getAll(req,res){
+    
     const user = req.user;
 		if(user.type == 'client'){
 			return res.send({ message: 'You are not admin or a cashier'});
@@ -76,10 +78,51 @@ async getActiveAccount(req,res){
     const user = req.user;
 		if(user.type == 'client'){
 			return res.send({ message: 'You are not admin or a cashier'});
-		}
+        }
+
     try {
-        const active = req.query.status;
-        const { rows } = await AccountModels.getActiveAccount(active);
+        const status = 'active'
+        const  {rows} = await AccountModels.getActiveAccount(status);
+        return res.status(200).json({
+            status: 200,
+            data: rows,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            status: 500,
+            error
+        })
+    }
+}
+async getDormantAccount(req,res){
+    const user = req.user;
+		if(user.type == 'client'){
+			return res.send({ message: 'You are not admin or a cashier'});
+        }
+
+    try {
+        const status = 'draft'
+        const  {rows} = await AccountModels.getActiveAccount(status);
+        return res.status(200).json({
+            status: 200,
+            data: rows,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            status: 500,
+            error
+        })
+    }
+}
+async getDraftAccount(req,res){
+    const user = req.user;
+		if(user.type == 'client'){
+			return res.send({ message: 'You are not admin or a cashier'});
+        }
+
+    try {
+        const status = 'dormant'
+        const  {rows} = await AccountModels.getActiveAccount(status);
         return res.status(200).json({
             status: 200,
             data: rows,

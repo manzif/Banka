@@ -1,7 +1,9 @@
 import Validate from '../helpers/validate';
 import myqueries from '../db/myqueries';
-import db from '../db/index';
+import index from '../db/index';
 import TransactionModels from '../models/transaction';
+
+const db = index.runQuery;
 
 class Transaction {
 

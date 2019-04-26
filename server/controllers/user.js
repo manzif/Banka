@@ -1,10 +1,12 @@
 
 import Validate from '../helpers/validate';
-import db from '../db/index';
+import index from '../db/index';
 import myqueries from '../db/myqueries';
 import auth from '../middleware/authent';
 import helper from '../helpers/password';
 import UserModels from '../models/user';
+
+const db = index.runQuery;
 
 
 class User {
@@ -60,7 +62,7 @@ async DeleteUser(req,res){
         return res.status(400).json({ status: 400, error: 'User does not exist Please check your id try Again!!' });
         return res.status(200).json({
             status:200,
-            data:rows
+            message:'User was successfuly deleted'
         })
     } catch (error) {
         return res.status(500).json({
