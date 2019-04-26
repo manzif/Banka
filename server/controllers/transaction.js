@@ -77,8 +77,8 @@ async getOneTransactionId(req, res){
 		}
 
 		try {
-			const value6 = trans.accountnumber
-			const account = await TransactionModels.debit1(value6);
+			const accountnumber = trans.accountnumber
+			const account = await TransactionModels.getAccountNumber(accountnumber);
 			if (account.rowCount == 0) {
 				return res.status(400).json({ status: 400, error: 'Account requested is not available' });
 			}
@@ -89,12 +89,12 @@ async getOneTransactionId(req, res){
 			const amount = parseInt(account.rows[0].balance) - trans.amount;
 			const data = [new Date(), 'debit', trans.accountnumber, trans.cashier, trans.amount, account.rows[0].balance, amount];
 
-			const transaction = await TransactionModels.debit2(data);
+			const transaction = await TransactionModels.createTransaction(data);
 			if (transaction.rowCount == 0) {
 				return res.status(400).json({ status: 400, error: 'Failed to create transaction' });
 			}
-			const value7 = [amount, trans.accountnumber];
-			await TransactionModels.debit3(value7)
+			const balance = [amount, trans.accountnumber];
+			await TransactionModels.updateBalance(balance);
 			res.status(200).json({ status: 200, data: transaction.rows });
 		} catch (error) {
 			return res.status(500).json({
@@ -120,8 +120,8 @@ async getOneTransactionId(req, res){
 		}
 
 		try {
-			const value6 = trans.accountnumber
-			const account = await TransactionModels.credit1(value6)
+			const accountnumber = trans.accountnumber
+			const account = await TransactionModels.getAccountNumber(accountnumber)
 			if (account.rowCount == 0) {
 				return res.status(400).json({ status: 400, error: 'Account requested is not available' });
 			}
@@ -129,12 +129,12 @@ async getOneTransactionId(req, res){
 			const amount = parseInt(account.rows[0].balance) + trans.amount;
 			const data = [new Date(), 'debit', trans.accountnumber, trans.cashier, trans.amount, account.rows[0].balance, amount];
 
-			const transaction =await TransactionModels.credit2(data)
+			const transaction =await TransactionModels.createTransaction(data)
 			if (transaction.rowCount == 0) {
 				return res.status(400).json({ status: 400, error: 'Failed to create transaction' });
 			}
-			const value7 = [amount, trans.accountnumber];
-			await TransactionModels.credit3(value7)
+			const balance = [amount, trans.accountnumber];
+			await TransactionModels.updateBalance(balance)
 			res.status(200).json({ status: 200, data: transaction.rows });
 		} catch (error) {
 			return res.status(500).json({

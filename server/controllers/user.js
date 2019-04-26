@@ -10,7 +10,7 @@ import UserModels from '../models/user';
 class User {
 
 
-    async getAllUser(req, res){
+async getAllUser(req, res){
         const user = req.user;
 		if(user.type == 'client'){
 			return res.send({ message: 'You are not admin or a cashier'});
@@ -101,7 +101,7 @@ async signup(req, res){
 
 }
 
-    async signin(req, res) {
+async signin(req, res) {
         const values = [req.body.email.toLowerCase()]
 
         try {
