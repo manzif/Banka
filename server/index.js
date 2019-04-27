@@ -2,6 +2,7 @@ import express from 'express';
 import userRoutes from './routes/user';
 import accountRoutes from './routes/account';
 import transactionRoutes from './routes/transaction';
+import '@babel/polyfill';
 
 const app = express();
 

@@ -1,5 +1,7 @@
 import myqueries from '../db/myqueries';
-import db from '../db/index';
+import index from '../db/index';
+
+const db = index.runQuery;
 
 class TransactionModels{
 
@@ -37,6 +39,16 @@ async updateBalance(balance){
     const result = await db.query(myqueries.updateBalance, [balance]);
     return result;
 }
+
+async AccountOwner(owner){
+    const result = await db.query(myqueries.getOne, [owner]);
+    return result;
+}
+async verifyId(id){
+    const result = await db.query(myqueries.verify, [id]);
+    return result;
+}
+
 }
 
 export default new TransactionModels();

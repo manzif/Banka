@@ -1,7 +1,9 @@
 import Validate from '../helpers/validate';
 import myqueries from '../db/myqueries';
-import db from '../db/index';
+import index from '../db/index';
 import TransactionModels from '../models/transaction';
+
+const db = index.runQuery;
 
 class Transaction {
 
@@ -25,8 +27,15 @@ class Transaction {
 	}
 
 async getOneTransaction(req, res){
+	const user = req.user;
+	const values = parseInt(req.params.account_number);
 	try {
-		const values = parseInt(req.params.account_number)
+		if(user.type == 'client'){
+			const id = user.id;
+			const {rows} = await TransactionModels.verifyId(id)
+		if(rows[0].accountnumber != values)
+        return res.status(400).json({ status: 400, error: 'You are not allowed to view others transactions Please check Account Number and try Again!!' });
+		}
 		const {rows, rowCount} = await TransactionModels.getOneTransaction(values);
 		if(rowCount == 0)
         return res.status(400).json({ status: 400, error: 'Account does not exist or have done it any transaction Please check Account Number and try Again!!' });
@@ -41,7 +50,6 @@ async getOneTransaction(req, res){
 		})
 	}
 }	
-
 async getOneTransactionId(req, res){
 	try {
 		const value = parseInt(req.params.id);

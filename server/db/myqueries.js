@@ -5,7 +5,7 @@ const getOne = 'SELECT * FROM users WHERE id = $1';
 const getEmail = 'SELECT * FROM users WHERE email = $1';
 const deleteUser = 'DELETE FROM users WHERE id = $1 RETURNING *';
 
-
+const verify = 'SELECT accounts.* FROM accounts,users WHERE accounts.owner = users.id AND users.id = $1';
 const getAccountNumber = 'SELECT * FROM accounts WHERE accountnumber = $1';
 const getAccountId = 'SELECT accounts.* FROM accounts,users WHERE accounts.owner = users.id AND users.email= $1';
 const getAccountDetails = 'SELECT * FROM accounts WHERE accountnumber = $1';
@@ -23,6 +23,9 @@ const createAccount = 'INSERT INTO accounts(accountnumber, createdon, owner, typ
 const createTransaction = 'INSERT INTO transactions(createdon, type, accountnumber, cashier, amount, oldbalance, newbalance) VALUES($1, $2, $3, $4, $5, $6, $7)  RETURNING *';
 const getOneTransaction = 'SELECT * FROM transactions WHERE accountnumber = $1';
 const getOneTransactionId = 'SELECT * FROM transactions WHERE id = $1';
+
+const deleteAllUsers = 'DELETE FROM users';
+const makeUserAdmin = 'UPDATE users SET is_admin = $1,type=$2 WHERE email = $3';
 
 export default  {
  //User queries   
@@ -42,6 +45,8 @@ export default  {
  getAccountId,
  getEmail,
  getOneAccount,
+ makeUserAdmin,
+ verify,
  
 
  //transactions queries
@@ -50,6 +55,7 @@ export default  {
  getCashier,
  updateBalance,
  getOneTransaction,
- getOneTransactionId
+ getOneTransactionId,
+ deleteAllUsers
  
 }

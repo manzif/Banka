@@ -1,5 +1,7 @@
 import myqueries from '../db/myqueries';
-import db from '../db/index';
+import index from '../db/index';
+
+const db = index.runQuery;
 
 
 class UserModels{
@@ -32,6 +34,10 @@ async signup(values){
 // user signin 
 async signin(values){
     const result = await db.query(myqueries.signin, values);
+    return result;
+}
+async checkUser(email){
+    const result = await db.query(myqueries.getEmail, [email]);
     return result;
 }
 }

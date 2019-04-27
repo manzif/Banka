@@ -1,6 +1,6 @@
 
 
-const pool = require('./index')
+const pool = require('./index').pool
 
 const connect = async () => await pool.connect();
 
