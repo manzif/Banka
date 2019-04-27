@@ -7,57 +7,47 @@ class TransactionModels{
 
     //get all transaction
 async getAllTransaction(){
-    const getAllTransaction =  await db.query(myqueries.getAllTransaction);
-    return getAllTransaction;
+    const result =  await db.query(myqueries.getAllTransaction);
+    return result;
 }
 
 // get  transactions of one account
 
 async getOneTransaction(account_number){
     
-    const getOneTransaction = db.query(myqueries.getOneTransaction, [account_number]);
-    return getOneTransaction;
+    const result = db.query(myqueries.getOneTransaction, [account_number]);
+    return result;
 }
-
-
 // get one transaction
 
 async getOneTransactionId(id){
-    const getOneTransactionId = await db.query(myqueries.getOneTransactionId, [id]);
-    return getOneTransactionId;
+    const result = await db.query(myqueries.getOneTransactionId, [id]);
+    return result;
 }
-
 // debit transaction
 
-async debit1(value6){
-    const debit1 = await db.query(myqueries.getAccountNumber, [value6]);
-    return debit1;
+async getAccountNumber(accountnumber){
+    const result = await db.query(myqueries.getAccountNumber, [accountnumber]);
+    return result;
 }
 
-async debit2(data){
-    const debit2 = await db.query(myqueries.createTransaction, data);
-    return debit2;
+async createTransaction(data){
+    const result = await db.query(myqueries.createTransaction, data);
+    return result;
 }
-async debit3(value7){
-    const debit3 = await db.query(myqueries.updateBalance, [value7]);
-    return debit3;
-}
-
-/// credit
-async credit1(value6){
-    const credit1 = await db.query(myqueries.getAccountNumber, [value6]);
-    return credit1;
+async updateBalance(balance){
+    const result = await db.query(myqueries.updateBalance, [balance]);
+    return result;
 }
 
-async credit2(data){
-    const credit2 = await db.query(myqueries.createTransaction, data);
-    return credit2;
+async AccountOwner(owner){
+    const result = await db.query(myqueries.getOne, [owner]);
+    return result;
 }
-async credit3(value7){
-    const credit3 = await db.query(myqueries.updateBalance, [value7]);
-    return credit3;
+async verifyId(id){
+    const result = await db.query(myqueries.verify, [id]);
+    return result;
 }
-
 
 }
 

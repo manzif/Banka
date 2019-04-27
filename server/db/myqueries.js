@@ -5,7 +5,7 @@ const getOne = 'SELECT * FROM users WHERE id = $1';
 const getEmail = 'SELECT * FROM users WHERE email = $1';
 const deleteUser = 'DELETE FROM users WHERE id = $1 RETURNING *';
 
-
+const verify = 'SELECT accounts.* FROM accounts,users WHERE accounts.owner = users.id AND users.id = $1';
 const getAccountNumber = 'SELECT * FROM accounts WHERE accountnumber = $1';
 const getAccountId = 'SELECT accounts.* FROM accounts,users WHERE accounts.owner = users.id AND users.email= $1';
 const getAccountDetails = 'SELECT * FROM accounts WHERE accountnumber = $1';
@@ -46,6 +46,7 @@ export default  {
  getEmail,
  getOneAccount,
  makeUserAdmin,
+ verify,
  
 
  //transactions queries

@@ -3,38 +3,43 @@ import index from '../db/index';
 
 const db = index.runQuery;
 
+
 class UserModels{
 
     //get all users
 async getAllUsers(){
-    const getAllUsers = await db.query(myqueries.getAllUsers);
-    return getAllUsers;
+    const result = await db.query(myqueries.getAllUsers);
+    return result;
 }
 
 //get one user 
 
 async getUser(id){
-    const getUser =  await db.query(myqueries.getOne, [id]);
-    return getUser;
+    const result =  await db.query(myqueries.getOne, [id]);
+    return result;
 }
 
 //delete user 
 async DeleteUser(id){
-    const DeleteUser = await db.query(myqueries.deleteUser, [id]);
-    return DeleteUser;
+    const result = await db.query(myqueries.deleteUser, [id]);
+    return result;
 }
 
 // user signup
 async signup(values){
-    const signup =  await db.query(myqueries.signup, values);
-    return signup;
+    const result =  await db.query(myqueries.signup, values);
+    return result;
 }
 
 // user signin 
 async signin(values){
-    const signin = await db.query(myqueries.signin, values);
-    return signin;
+    const result = await db.query(myqueries.signin, values);
+    return result;
 }
-
+async checkUser(email){
+    const result = await db.query(myqueries.getEmail, [email]);
+    return result;
+}
 }
 export default new UserModels();
+

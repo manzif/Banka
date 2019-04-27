@@ -31,15 +31,14 @@ async getAll(req,res){
 
 async getOneAccount(req,res){
     const user = req.user;
-		if(user.type == 'client'){
-			return res.send({ message: 'You are not admin or a cashier'});
-		}
     try {
         const id = parseInt(req.params.id) ;
         const {rows, rowCount}= await AccountModels.getOneAccount(id);
-
         if(rowCount == 0)
         return res.status(400).json({ status: 400, error: 'Account does not exist Please check your id and try Again!!' });
+        if(rows[0].owner != user.id && user.type =='client')
+        return res.status(400).json({ status: 400, error: 'You are not allowed to view others transactions Please check Account Number and try Again!!' });
+		
         return res.status(200).json({
             status: 200,
             data: rows,
@@ -151,11 +150,11 @@ async create (req, res){
        const values =[account.accountnumber, account.createdon, account.owner, account.type, account.status, account.balance]
 
        try {
-           const user = await AccountModels.create1(account.owner);
+           const user = await AccountModels.AccountOwner(account.owner);
            if(user.rowCount == 0){
             return res.status(400).json({ status: 400, error: 'Please signup first' });
            }
-           const {rows} = await AccountModels.create2(values);
+           const {rows} = await AccountModels.createAccount(values);
            return res.status(200).json({
                status:200,
                data:rows
@@ -175,14 +174,14 @@ async activate(req,res){
     
 
     try {
-        const values1 = ['active', parseInt(req.params.account_number)];
-        const value5 = req.params.account_number;
-        const account = await AccountModels.activate1(value5)
+        const values = ['active', parseInt(req.params.account_number)];
+        const accountnumber = req.params.account_number;
+        const account = await AccountModels.getAccountNumber(accountnumber)
         if(account.rowCount == 0)
         return res.status(400).json({ status: 400, error: 'Account does not exist' });
         if(account.rows[0].status === 'active')
         return res.status(400).json({ status: 400, error: 'Account is already activated ' });
-        const {rows} = await AccountModels.activate2(values1)
+        const {rows} = await AccountModels.activateAccount(values)
         return res.status(200).json({
             status:200,
             data:rows
@@ -201,16 +200,16 @@ async deactivate(req, res){
 		if(!user.isAdmin){
 			return res.send({ message: 'You are not admin'});
 		}
-    const values1 = ['dormant', req.params.account_number];
+    const values = ['dormant', req.params.account_number];
 
     try {
-        const value5 = req.params.account_number;
-        const account = await AccountModels.deactivate1(value5);
+        const accountnumber = req.params.account_number;
+        const account = await AccountModels.getAccountNumber(accountnumber);
         if(account.rowCount == 0)
         return res.status(400).json({ status: 400, error: 'Account does not exist' });
         if(account.rows[0].status === 'dormant')
         return res.status(400).json({ status: 400, error: 'Account is already Deactivated ' });
-        const {rows} = await AccountModels.deactivate2(values1);
+        const {rows} = await AccountModels.deactivateAccount(values);
         return res.status(200).json({
             status:200,
             data:rows
@@ -230,10 +229,10 @@ async delete(req, res){
 		}
     try {
         const value = req.params.account_number;
-        const account = await AccountModels.delete1(value);
+        const account = await AccountModels.getAccountNumber(value);
         if(account.rowCount == 0)
         return res.status(400).json({ status: 400, error: 'Account does not exist' });
-        const {rows} = await AccountModels.delete2(value);
+        const {rows} = await AccountModels.deleteAccount(value);
         return res.status(200).json({
             status:200,
             message:'Account successfuly deleted'

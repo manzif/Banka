@@ -12,7 +12,7 @@ const db = index.runQuery;
 class User {
 
 
-    async getAllUser(req, res){
+async getAllUser(req, res){
         const user = req.user;
 		if(user.type == 'client'){
 			return res.send({ message: 'You are not admin or a cashier'});
@@ -89,6 +89,10 @@ async signup(req, res){
         const values = [user.firstname, user.lastname, user.email, hash, user.type];
 
         try {
+            const email = user.email;
+            const check = await UserModels.checkUser(email);
+            if(check.rowCount != 0)
+            return res.status(400).json({ status: 400, error: 'user already exist!!' });
             const {rows} = await UserModels.signup(values)
             return res.status(200).json({
                 status:200,
@@ -103,7 +107,7 @@ async signup(req, res){
 
 }
 
-    async signin(req, res) {
+async signin(req, res) {
         const values = [req.body.email.toLowerCase()]
 
         try {
