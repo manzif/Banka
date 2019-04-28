@@ -3,7 +3,13 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-const pool = process.env.NODE_ENV === 'test' ? new Pool({ connectionString: process.env.DATABASE_URL_TEST })
+const pool = process.env.NODE_ENV === 'test' ? new Pool({ 
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_TEST,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT,
+ })
 : new Pool({ connectionString: process.env.DATABASE_URL });
 
 const runQuery = {
