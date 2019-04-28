@@ -16,7 +16,16 @@ async getAll(req,res){
 			return res.send({ message: 'You are not admin or a cashier'});
 		}
     try {
-        const  {rows}  = await AccountModels.getAll();
+        let rows;
+        const status = req.query.status;
+        if(status){
+           ( {rows} = await AccountModels.getActiveAccount(status));
+           return res.status(200).json({
+                status: 200,
+                data: rows,
+            });
+        }
+       ( {rows}  = await AccountModels.getAll());
         return res.status(200).json({
             status: 200,
             data: rows,
@@ -72,68 +81,6 @@ try {
     })
 }
 }
-
-async getActiveAccount(req,res){
-    const user = req.user;
-		if(user.type == 'client'){
-			return res.send({ message: 'You are not admin or a cashier'});
-        }
-
-    try {
-        const status = 'active'
-        const  {rows} = await AccountModels.getActiveAccount(status);
-        return res.status(200).json({
-            status: 200,
-            data: rows,
-        });
-    } catch (error) {
-        return res.status(500).json({
-            status: 500,
-            error
-        })
-    }
-}
-async getDormantAccount(req,res){
-    const user = req.user;
-		if(user.type == 'client'){
-			return res.send({ message: 'You are not admin or a cashier'});
-        }
-
-    try {
-        const status = 'draft'
-        const  {rows} = await AccountModels.getActiveAccount(status);
-        return res.status(200).json({
-            status: 200,
-            data: rows,
-        });
-    } catch (error) {
-        return res.status(500).json({
-            status: 500,
-            error
-        })
-    }
-}
-async getDraftAccount(req,res){
-    const user = req.user;
-		if(user.type == 'client'){
-			return res.send({ message: 'You are not admin or a cashier'});
-        }
-
-    try {
-        const status = 'dormant'
-        const  {rows} = await AccountModels.getActiveAccount(status);
-        return res.status(200).json({
-            status: 200,
-            data: rows,
-        });
-    } catch (error) {
-        return res.status(500).json({
-            status: 500,
-            error
-        })
-    }
-}
-
 async create (req, res){
     const result = Validate.validateAccount(req.body);
         if(result.error){
