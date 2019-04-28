@@ -10,10 +10,10 @@ before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
-  - npm install
   - psql -c 'create database banka_test;' -U postgres
   - node server/db/tables createTables
 script:
+  - npm install
   - npm test
 after_success:
   - npm run coverage
