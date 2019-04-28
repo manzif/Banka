@@ -28,7 +28,7 @@ describe('User', () => {
 
   it('Should create a new User', (done) => {
       const user = {
-          email: 'manzi1@gmail.com',
+          email: 'pacifiqueclement@gmail.com',
           firstname: 'Manzi',
           lastname: 'Fabrice' ,
           password: 'Password12'
