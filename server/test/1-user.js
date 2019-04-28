@@ -37,7 +37,6 @@ describe('User', () => {
       .post('/api/v1/auth/signup')
       .send(user)
       .end((err, res) => {
-        console.log(res.error);
         res.should.have.status(200);
         res.body.should.be.a('object');
         res.body.should.have.property('status').eql(200);
