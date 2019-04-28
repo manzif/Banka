@@ -25,7 +25,9 @@ const getOneTransaction = 'SELECT * FROM transactions WHERE accountnumber = $1';
 const getOneTransactionId = 'SELECT * FROM transactions WHERE id = $1';
 
 const deleteAllUsers = 'DELETE FROM users';
+const deleteAllAccounts = 'DELETE FROM accounts';
 const makeUserAdmin = 'UPDATE users SET is_admin = $1,type=$2 WHERE email = $3';
+const makeUserCashier = 'UPDATE users SET type=$1 WHERE email = $2';
 
 export default  {
  //User queries   
@@ -56,6 +58,7 @@ export default  {
  updateBalance,
  getOneTransaction,
  getOneTransactionId,
- deleteAllUsers
- 
+ deleteAllUsers,
+ deleteAllAccounts,
+ makeUserCashier
 }
