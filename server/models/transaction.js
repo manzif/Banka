@@ -36,7 +36,7 @@ async createTransaction(data){
     return result;
 }
 async updateBalance(balance){
-    const result = await db.query(myqueries.updateBalance, [balance]);
+    const result = await db.query(myqueries.updateBalance, balance);
     return result;
 }
 
