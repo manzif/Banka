@@ -10,7 +10,7 @@
     "clean": "rm -rf build && mkdir build",
     "compile": "./node_modules/.bin/babel ./server -d ./build",
     "build": "npm run clean && npm run compile",
-    "start": "node build/index.js"
+    "start": "node --require @babel/polyfill  build/index.js"
   },
   "author": "ME",
   "license": "ISC",
