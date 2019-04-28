@@ -26,7 +26,6 @@ const Auth = {
 			req.user = user;
 			next();
 		} catch (error) {
-			console.log(error);
 			return res.status(400).send({
 				status: 400,
 				error: 'Invalid token'
