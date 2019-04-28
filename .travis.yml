@@ -14,6 +14,7 @@ before_script:
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
   - psql -c 'create database banka_test;' -U postgres
+  - node server/db/tables dropTables
   - node server/db/tables createTables
 script:
   - npm install
