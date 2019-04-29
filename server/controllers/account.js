@@ -94,12 +94,16 @@ async create (req, res){
                     status:'draft',
                     balance: 0.0
                 };
+                if (account.type != 'savings' || !'current'){
+                    return res.status(400).json({ status: 400, message: 'We does not have that type of account PLease try again with savings or current' });
+                }
        const values =[account.accountnumber, account.createdon, account.owner, account.type, account.status, account.balance]
 
        try {
            const user = await AccountModels.AccountOwner(account.owner);
            if(user.rowCount == 0){
             return res.status(400).json({ status: 400, error: 'Please signup first' });
+         
            }
            const {rows} = await AccountModels.createAccount(values);
            return res.status(200).json({

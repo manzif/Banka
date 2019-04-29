@@ -51,6 +51,9 @@ async getOneTransaction(req, res){
 	}
 }	
 async getOneTransactionId(req, res){
+	if(user.type == 'client'){
+		return res.send({ message: 'You are not admin or a cashier'});
+	}
 	try {
 		const value = parseInt(req.params.id);
 		const {rows, rowCount} = await TransactionModels.getOneTransactionId(value);
