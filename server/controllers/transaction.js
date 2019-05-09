@@ -1,120 +1,161 @@
 import Validate from '../helpers/validate';
+import myqueries from '../db/myqueries';
+import index from '../db/index';
+import TransactionModels from '../models/transaction';
 
-const accounts = [
+const db = index.runQuery;
 
-    {id:1, accountNumber: 23456546, createdOn:2019/9/12, user:1, Type: 'saving', status: 'draft', balance:12000},
-    {id:2, accountNumber: 23454566, createdOn:2019/7/12, user:2, Type: 'current', status: 'active', balance:40000},
-    {id:3, accountNumber: 23412346, createdOn:2019/2/12, user:3, Type: 'saving', status: 'draft', balance:23000},  
-]
-const users = [
+class Transaction {
 
-    {id:1, email: 'manzif@gmail.com',  firstName:'Manzi', lastName:'Fabrice',password:'password', Type: 'staff' , isAdmin:true },
-    {id:2, email: 'mbabazifly@gmail.com', firstName:'Fly', lastName:'Mbabazi', password:'password', Type: 'Cashier' , isAdmin:false },
-    {id:3, email: 'irakozecarl@gmail.com', firstName:'Carl', lastName:'Irakoze', password:'password', Type: 'Client', isAdmin:false },
-];
+	async getAllTransaction(req, res) {
+		const user = req.user;
+		if(user.type == 'client'){
+			return res.send({ message: 'You are not admin or a cashier'});
+		}
+		try {
+			const { rows } = await TransactionModels.getAllTransaction();
+			return res.status(200).send({
+				status: res.statusCode,
+				data: rows,
+			});
+		} catch (error) {
+			return res.status(500).json({
+				status: 500,
+				error
+			})
+		}
+	}
 
-const transactions = [
-    {id:1, createdOn:2019/9/12, accountNumber: 23412346,  cashier:2, amount:23000, oldBalance: 23000, newBalance: 26000 },
-    {id:2, createdOn:2019/9/12, accountNumber: 23454566,  cashier:2, amount:20000, oldBalance: 40000, newBalance: 20000 },
-    {id:3, createdOn:2019/9/12, accountNumber: 23412346,  cashier:2, amount:20000, oldBalance: 120000, newBalance: 100000 },
-];
+async getOneTransaction(req, res){
+	const user = req.user;
+	const values = parseInt(req.params.account_number);
+	try {
+		if(user.type == 'client'){
+			const id = user.id;
+			const {rows} = await TransactionModels.verifyId(id)
+		if(rows[0].accountnumber != values)
+        return res.status(400).json({ status: 400, error: 'You are not allowed to view others transactions Please check Account Number and try Again!!' });
+		}
+		const {rows, rowCount} = await TransactionModels.getOneTransaction(values);
+		if(rowCount == 0)
+        return res.status(400).json({ status: 400, error: 'Account does not exist or have done it any transaction Please check Account Number and try Again!!' });
+		return res.status(200).json({
+			status: 200,
+			data: rows
+		})
+	} catch (error) {
+		return res.status(500).json({
+			status:500,
+			error
+		})
+	}
+}	
+async getOneTransactionId(req, res){
+	if(user.type == 'client'){
+		return res.send({ message: 'You are not admin or a cashier'});
+	}
+	try {
+		const value = parseInt(req.params.id);
+		const {rows, rowCount} = await TransactionModels.getOneTransactionId(value);
+		if(rowCount == 0)
+        return res.status(400).json({ status: 400, error: 'Transaction does not exist Please check the id and try Again!!' });
+		return res.status(200).json({
+			status: 200,
+			data: rows
+		})
+	} catch (error) {
+		return res.status(500).json({
+			status:500,
+			error
+		})
+	}
+}	
 
+	async debit(req, res) {
+		const user = req.user;
+		if(user.type != 'cashier'){
+			return res.send({ message: 'You are not a cashier'});
+		}
+		
+		const trans = {
+			accountnumber: req.params.account_number,
+			cashier: req.body.cashier,
+			amount: req.body.amount
+		};
+		const result = Validate.validateTransaction(trans);
+		if (result.error) {
+			return res.status(400).json({ status: 400, error: result.error.details[0].message });
+		}
 
+		try {
+			const accountnumber = trans.accountnumber
+			const account = await TransactionModels.getAccountNumber(accountnumber);
+			if (account.rowCount == 0) {
+				return res.status(400).json({ status: 400, error: 'Account requested is not available' });
+			}
+			if (parseInt(account.rows[0].balance) < trans.amount) {
+				return res.status(400).json({ status: 400, error: 'You don\'t have that amount of money'});
+			}
+		
+			const amount = parseInt(account.rows[0].balance) - trans.amount;
+			const data = [new Date(), 'debit', trans.accountnumber, trans.cashier, trans.amount, account.rows[0].balance, amount];
 
+			const transaction = await TransactionModels.createTransaction(data);
+			if (transaction.rowCount == 0) {
+				return res.status(400).json({ status: 400, error: 'Failed to create transaction' });
+			}
+			const balance = [amount, trans.accountnumber];
+			await TransactionModels.updateBalance(balance);
+			res.status(200).json({ status: 200, data: transaction.rows });
+		} catch (error) {
+			return res.status(500).json({
+				status: 500,
+				error
+			})
+		}
+	}
+	async credit(req, res) {
+		const user = req.user;
+		if(user.type != 'cashier'){
+			return res.send({ message: 'You are not a cashier'});
+		}
+		
+		const trans = {
+			accountnumber: req.params.account_number,
+			cashier: req.body.cashier,
+			amount: req.body.amount
+		};
+		const result = Validate.validateTransaction(trans);
+		if (result.error) {
+			return res.status(400).json({ status: 400, error: result.error.details[0].message });
+		}
 
-class Transaction{
+		try {
+			const accountnumber = trans.accountnumber
+			const account = await TransactionModels.getAccountNumber(accountnumber)
+			if (account.rowCount == 0) {
+				return res.status(400).json({ status: 400, error: 'Account requested is not available' });
+			}
+		
+			const amount = parseInt(account.rows[0].balance) + trans.amount;
+			const data = [new Date(), 'debit', trans.accountnumber, trans.cashier, trans.amount, account.rows[0].balance, amount];
 
-    getAll(req,res){     
-        res.status(200).json({ status: 200, data: transactions });
-    }
-
-     debit(req,res){
-        const trans = {
-            accountNumber: req.params.account_number,
-            cashier: req.body.cashier,
-            amount: req.body.amount
-        };
-        const result = Validate.validateTransaction(trans);
-        if(result.error){
-            return res.status(400).json({ status: 400, error: result.error.details[0].message });
-        }
-
-        const findAccount = accounts.find(c => c.accountNumber === parseInt(req.params.account_number));
-        const findCashier = users.find(c => c.id === req.body.cashier && c.Type === 'Cashier');
-        if (!findAccount){
-            return res.status(400).json({ status: 400, error: 'Account not found' });
-        }
-        if (!findCashier){
-            return res.status(400).json({ status: 400, error: 'Cashier not found' });
-        }
-        const transaction = {
-            id: transactions.length + 1,
-            createdOn: new Date(),
-            accountNumber: parseInt(req.params.account_number),
-            cashier: req.body.cashier,
-            amount: req.body.amount,
-            oldBalance: findAccount.balance,
-            newBalance: findAccount.balance + req.body.amount
-        }
-        transactions.push(transaction);
-
-        const data = {
-            transactionId: transaction.id,
-            accountNumber: transaction.accountNumber,
-            amount: transaction.amount,
-            cashier: transaction.cashier,
-            transactionType: 'Debit',
-            accountBalance: transaction.newBalance
-        }
-        
-        res.status(201).json({ status: 201, data: data });
-    }
-    credit(req,res){
-        const trans = {
-            accountNumber: req.params.account_number,
-            cashier: req.body.cashier,
-            amount: req.body.amount
-        };
-        const result = Validate.validateTransaction(trans);
-        if(result.error){
-            return res.status(400).json({ status: 400, error: result.error.details[0].message });
-        }
-
-        const findAccount = accounts.find(c => c.accountNumber === parseInt(req.params.account_number));
-        const findCashier = users.find(c => c.id === req.body.cashier && c.Type === 'Cashier');
-        if (!findAccount){
-            return res.status(400).json({ status: 400, error: 'Account not found' });
-        }
-        if (!findCashier){
-            return res.status(400).json({ status: 400, error: 'Cashier not found' });
-        }
-        if(findAccount.balance < trans.amount){
-            return res.status(400).json({ status: 400, error: 'You don\'t have that certain amount of money'});
-        }
-        const transaction = {
-            id: transactions.length + 1,
-            createdOn: new Date(),
-            accountNumber: parseInt(req.params.account_number),
-            cashier: req.body.cashier,
-            amount: req.body.amount,
-            oldBalance: findAccount.balance,
-            newBalance: findAccount.balance - req.body.amount
-        }
-        transactions.push(transaction);
-
-        const data = {
-            transactionId: transaction.id,
-            accountNumber: transaction.accountNumber,
-            amount: transaction.amount,
-            cashier: transaction.cashier,
-            transactionType: 'credit',
-            accountBalance: transaction.newBalance
-        }
-        
-        res.status(201).json({ status: 201, data: data });
-    }
-
-    
+			const transaction =await TransactionModels.createTransaction(data)
+			if (transaction.rowCount == 0) {
+				return res.status(400).json({ status: 400, error: 'Failed to create transaction' });
+			}
+			const balance = [amount, trans.accountnumber];
+			await TransactionModels.updateBalance(balance)
+			res.status(200).json({ status: 200, data: transaction.rows });
+		} catch (error) {
+			return res.status(500).json({
+				status: 500,
+				error
+			})
+		}
+	}
 }
 
 export default new Transaction();
+
+

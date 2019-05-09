@@ -1,93 +1,222 @@
-
 import Validate from '../helpers/validate';
+import index from '../db/index';
+import myqueries from '../db/myqueries';
+import AccountModels from '../models/accounts';
+import { stat } from 'fs';
 
-const accounts = [
+const db = index.runQuery;
 
-    {id:1, accountNumber: 23456546, createdOn:2019/9/12, user:1, type: 'saving', status: 'draft', balance:234789789},
-    {id:2, accountNumber: 23454566, createdOn:2019/7/12, user:2, type: 'current', status: 'active', balance:78855789},
-    {id:3, accountNumber: 23412346, createdOn:2019/2/12, user:3, type: 'saving', status: 'draft', balance:2374567},  
-]
-const users = [
-
-    {id:1, email: 'manzif@gmail.com',  firstName:'Manzi', lastName:'Fabrice',password:'password', type: 'staff' , isAdmin:true },
-    {id:2, email: 'mbabazifly@gmail.com', firstName:'Fly', lastName:'Mbabazi', password:'password', type: 'Client' , isAdmin:false },
-    {id:3, email: 'irakozecarl@gmail.com', firstName:'Carl', lastName:'Irakoze', password:'password', type: 'Client', isAdmin:false },
-];
 
 class Account{
 
-    getAll(req,res){   
-        res.status(200).json({ status: 200, data: accounts });
+async getAll(req,res){
+    
+    const user = req.user;
+		if(user.type == 'client'){
+			return res.send({ message: 'You are not admin or a cashier'});
+		}
+    try {
+        let rows;
+        const status = req.query.status;
+        if(status){
+           ( {rows} = await AccountModels.getActiveAccount(status));
+           return res.status(200).json({
+                status: 200,
+                data: rows,
+            });
+        }
+       ( {rows}  = await AccountModels.getAll());
+        return res.status(200).json({
+            status: 200,
+            data: rows,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            status: 500,
+            error
+        })
     }
+}
 
-    getAccount (req, res) {
-    const account = accounts.find(c => c.id === parseInt(req.params.id));
-        if(!account) return res.status(400).json({ status: 400, error: 'Account requested is not available' });
-        res.status(200).json({ status: 200, data: account });
+async getOneAccount(req,res){
+    const user = req.user;
+    try {
+        const id = parseInt(req.params.id) ;
+        const {rows, rowCount}= await AccountModels.getOneAccount(id);
+        if(rowCount == 0)
+        return res.status(400).json({ status: 400, error: 'Account does not exist Please check your id and try Again!!' });
+        if(rows[0].owner != user.id && user.type =='client')
+        return res.status(400).json({ status: 400, error: 'You are not allowed to view others transactions Please check Account Number and try Again!!' });
+		
+        return res.status(200).json({
+            status: 200,
+            data: rows,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            status: 500,
+            error
+        })
     }
+}
 
-    create(req,res){
-        const result = Validate.validateAccount(req.body);
+async getAccountDetails(req, res){
+    const user = req.user;
+		if(user.type == 'client'){
+			return res.send({ message: 'You are not admin or a cashier'});
+		}
+try {
+    const value = parseInt(req.params.account_number);
+    const {rows, rowCount} = await AccountModels.getAccountDetails(value);
+    if(rowCount == 0)
+    return res.status(400).json({ status: 400, error: 'Account requested is not available Please check the account number and try Again!!' });
+    return res.status(200).send({
+        status: 200,
+        data:rows,
+    })
+} catch (error) {
+    return res.status(500).json({
+        status:500,
+        error
+    })
+}
+}
+async create (req, res){
+    const result = Validate.validateAccount(req.body);
         if(result.error){
             return res.status(400).json({ status: 400, error: result.error.details[0].message });
         }
         const account = {
-            id : accounts.length + 1,
-            accountNumber: Math.floor((Math.random() * 80000000)+10000000 ),
-            createdOn: new Date(),
-            user:req.body.user,
-            type: req.body.type,
-            status:'draft',
-            balance: 0.0
-        };
-        accounts.push(account);
-         //const findUser = users.find(c => c.email === account.email);
-         const findId = users.find(c => c.id === account.user);
-         if(!findId){
-            return res.status(400).json({ status: 400, error:'please signup first'});
-         }
-         /*else if(findId){
-            return res.status(400).json({ status: 400, error:'This Id already have an account'});
-         }*/
-         const data = {
-            id:account.id, 
-            accountNumber: account.accountNumber,
-            firstName: findId.firstName,
-            lastName: findId.lastName,
-            type: account.type,
-            OpeningBalance: account.balance
-         }
-        res.status(201).json({ status: 201, data: data });
+                    accountnumber: Math.floor((Math.random() * 80000000)+10000000 ),
+                    createdon: new Date(),
+                    owner:req.body.owner,
+                    type: req.body.type,
+                    status:'draft',
+                    balance: 0.0
+                };
+                if (account.type != 'savings' || !'current'){
+                    return res.status(400).json({ status: 400, message: 'We does not have that type of account PLease try again with savings or current' });
+                }
+       const values =[account.accountnumber, account.createdon, account.owner, account.type, account.status, account.balance]
+
+       try {
+           const user = await AccountModels.AccountOwner(account.owner);
+           if(user.rowCount == 0){
+            return res.status(400).json({ status: 400, error: 'Please signup first' });
+         
+           }
+           const {rows} = await AccountModels.createAccount(values);
+           return res.status(200).json({
+               status:200,
+               data:rows
+           })
+       } catch (error) {
+           return res.status(500).json({
+               status:500,
+               error
+           })
+       }
+}
+async activate(req,res){
+    const user = req.user;
+		if(!user.isAdmin){
+			return res.send({ message: 'You are not admin'});
+		}
+    
+
+    try {
+        const values = ['active', parseInt(req.params.account_number)];
+        const accountnumber = req.params.account_number;
+        const account = await AccountModels.getAccountNumber(accountnumber)
+        if(account.rowCount == 0)
+        return res.status(400).json({ status: 400, error: 'Account does not exist' });
+        if(account.rows[0].status === 'active')
+        return res.status(400).json({ status: 400, error: 'Account is already activated ' });
+        const {rows} = await AccountModels.activateAccount(values)
+        return res.status(200).json({
+            status:200,
+            data:rows
+        })
+    } catch (error) {
+       return res.status(500).json({
+           status:500,
+           error
+       }) 
     }
-    activate(req,res){
-        const account = accounts.find(c => c.accountNumber === parseInt(req.params.account_number));
-        if(!account) return res.status(400).json({ status: 400, error: 'Account requested is not available' });
-        account.status = 'active';
-        const data = {
-            accountNumber: account.accountNumber,
-            status: account.status
-        }
-        res.status(200).json({ status: 200, data: data});
+}
+
+async deactivate(req, res){
+
+    const user = req.user;
+		if(!user.isAdmin){
+			return res.send({ message: 'You are not admin'});
+		}
+    const values = ['dormant', req.params.account_number];
+
+    try {
+        const accountnumber = req.params.account_number;
+        const account = await AccountModels.getAccountNumber(accountnumber);
+        if(account.rowCount == 0)
+        return res.status(400).json({ status: 400, error: 'Account does not exist' });
+        if(account.rows[0].status === 'dormant')
+        return res.status(400).json({ status: 400, error: 'Account is already Deactivated ' });
+        const {rows} = await AccountModels.deactivateAccount(values);
+        return res.status(200).json({
+            status:200,
+            data:rows
+        })
+    } catch (error) {
+       return res.status(500).json({
+           status:500,
+           error
+       }) 
     }
-    deactivate(req,res){
-        const account = accounts.find(c => c.accountNumber === parseInt(req.params.account_number));
-        if(!account) return res.status(400).json({ status: 400, error: 'Account requested is not available' });
-        if(account.status !== 'active'){
-            return res.status(400).json({ status: 400, error: 'Account is deactivated' });
-        }
-        account.status = 'Dormant';
-        const data = {
-            accountNumber: account.accountNumber,
-            status: account.status
-        }
-        res.status(200).json({ status: 200, data: data});
+}
+
+async delete(req, res){
+    const user = req.user;
+		if(!user.isAdmin){
+			return res.send({ message: 'You are not admin'});
+		}
+    try {
+        const value = req.params.account_number;
+        const account = await AccountModels.getAccountNumber(value);
+        if(account.rowCount == 0)
+        return res.status(400).json({ status: 400, error: 'Account does not exist' });
+        const {rows} = await AccountModels.deleteAccount(value);
+        return res.status(200).json({
+            status:200,
+            message:'Account successfuly deleted'
+        })
+    } catch (error) {
+       return res.status(500).json({
+           status:500,
+           error
+       }) 
     }
-    delete(req,res){
-        const account = accounts.find(c => c.accountNumber === parseInt(req.params.account_number));
-        if(!account) return res.status(400).json({ status: 400, error: 'Account requested is not available' });
-        accounts.splice(accounts.indexOf(account), 1);
-        res.status(200).json({ status: 200, message: 'Account successfully deleted' });
+}
+async getAccountId(req, res){
+    const user = req.user;
+		if(user.type == 'client'){
+			return res.send({ message: 'You are not admin or a cashier'});
+		}
+	try{
+        const email = req.params.email;
+        const {rows, rowCount } = await AccountModels.getAccountId(email);
+
+        if(rowCount == 0)
+        return res.status(400).json({ status: 400, error: 'User does not exist Please try Again' });
+		return res.status(200).json({
+			status: 200,
+			data: rows
+		})
+	} catch (error) {
+		return res.status(500).json({
+			status:500,
+			error
+		})
     }
+}	
 }
 
 

@@ -1,66 +1,139 @@
 
 import Validate from '../helpers/validate';
+import index from '../db/index';
+import myqueries from '../db/myqueries';
+import auth from '../middleware/authent';
+import helper from '../helpers/password';
+import UserModels from '../models/user';
+
+const db = index.runQuery;
 
 
-
-const users = [
-
-    {id:1, email: 'manzif@gmail.com',  firstName:'Manzi', lastName:'Fabrice',password:'password', type: 'staff' , isAdmin:true },
-    {id:2, email: 'mbabazifly@gmail.com', firstName:'Fly', lastName:'Mbabazi', password:'password', type: 'Client' , isAdmin:false },
-    {id:3, email: 'irakozecarl@gmail.com', firstName:'Carl', lastName:'Irakoze', password:'password', type: 'Client', isAdmin:false },
-];
+class User {
 
 
-
-class User{
-
-      getAll(req,res){
-         
-        res.status(200).json({ status: 200, data: users });
+async getAllUser(req, res){
+        const user = req.user;
+		if(user.type == 'client'){
+			return res.send({ message: 'You are not admin or a cashier'});
+		}
+        try {
+            const { rows } = await UserModels.getAllUsers();
+            return res.status(200).json({
+                status: 200,
+                data: rows,
+            });
+        } catch (error) {
+            return res.status(500).json({
+                status: 500,
+                error
+            })
+        }
     }
 
+async getUser(req,res){
+    try {
 
-    signup(req,res){
-        const result = Validate.validateSignup(req.body);
-        if(result.error){
-            return res.status(400).json({ status: 400, error: result.error.details[0].message });
-        }
-        const user = {
-            id : users.length + 1,
-            email: req.body.email ,
-            firstName: req.body.firstName,
-            lastName: req.body.lastName ,
-            password: req.body.password,
-            type: 'client',
-            isAdmin: false
-        };
+        const id = parseInt(req.params.id);
 
-        const findUser = users.find(c => c.email === user.email);
-        if(findUser){
-            return res.status(400).json({ status: 400, error: "User already exist"});
-        };
-        users.push(user);
-        res.status(201).json({ status: 201, data: user });
-
+        const {rows, rowCount} = await UserModels.getUser(id);
+        if(rowCount == 0)
+        return res.status(400).json({ status: 400, error: 'User does not exist Please check your id try Again!!' });
+        return res.status(200).json({
+            status:200,
+            data:rows
+        })
+    } catch (error) {
+        return res.status(500).json({
+            status:500,
+            error
+        })
     }
-    signin(req,res){
-        const user = {
-            email: req.body.email,
-            password:req.body.password
-        };
-
-        const result = Validate.validateSignin(user);
-        if(result.error){
-            return res.status(400).json({ status: 400, error: result.error.details[0].message });
-        }
-
-        const findUser = users.find(c => c.email === user.email && c.password === user.password);
-
-        if(!findUser){
-            return res.status(404).json({ status: 404, error:'Incorrect email or password' });
-        }
-        res.status(200).json({ status: 200, data: findUser });
+}
+async DeleteUser(req,res){
+    const user = req.user;
+		if(!user.isAdmin){
+			return res.send({ message: 'You are not admin'});
+		}
+    try {
+        const id = parseInt(req.params.id);
+        const {rows, rowCount} = await UserModels.DeleteUser(id);
+        if(rowCount == 0)
+        return res.status(400).json({ status: 400, error: 'User does not exist Please check your id try Again!!' });
+        return res.status(200).json({
+            status:200,
+            message:'User was successfuly deleted'
+        })
+    } catch (error) {
+        return res.status(500).json({
+            status:500,
+            error
+        })
     }
 }
 
+async signup(req, res){
+    const result = Validate.validateSignup(req.body);
+        if (result.error) {
+            return res.status(400).json({ status: 400, error: result.error.details[0].message });
+        }
+        const user = {
+                    firstname: req.body.firstname,
+                    lastname: req.body.lastname,
+                    email: req.body.email.toLowerCase(),
+                    password: req.body.password,
+                    type: 'client'
+        
+                };
+        const hash = helper.hashPasword(user.password);
+        const values = [user.firstname, user.lastname, user.email, hash, user.type];
+
+        try {
+            const email = user.email;
+            const check = await UserModels.checkUser(email);
+            if(check.rowCount != 0)
+            return res.status(400).json({ status: 400, error: 'user already exist!!' });
+            const {rows} = await UserModels.signup(values)
+            return res.status(200).json({
+                status:200,
+                data:rows
+            })
+        } catch (error) {
+            return res.status(500).json({
+                status:500,
+                error
+            })
+        }
+
+}
+
+async signin(req, res) {
+        const values = [req.body.email.toLowerCase()]
+
+        try {
+            const user = await UserModels.signin(values);
+            if (user.rowCount == 0) {
+                return res.status(400).json({ status: 400, error: 'No account found' });
+            }
+
+            if (helper.comparePassword(req.body.password, user.rows[0].password)) {
+                const payload = { id: user.rows[0].id, isAdmin: user.rows[0].is_admin, type: user.rows[0].type };
+                const token = auth.generateToken(payload);
+                return res.status(200).json({ status: 200, token, data: user.rows });
+            }
+            return res.status(400).json({
+                status: 400,
+                message: 'Incorrect username or password'
+            });
+        } catch (error) {
+            console.log(error)
+            return res.status(400).json({
+                status: 400,
+                error,
+            });
+        }
+    }
+
+}
 export default new User();
+

@@ -1,13 +1,17 @@
 import express from 'express';
 import Account from '../controllers/account';
+import auth  from '../middleware/authent';
 
 const router = express.Router();
 
-router.get('/api/v1/accounts', Account.getAll);
-router.get('/api/v1/accounts/:id', Account.getAccount);
+router.get('/api/v1/accounts', auth.verifyToken, Account.getAll);
+router.get('/api/v1/account/:id', auth.verifyToken, Account.getOneAccount);
 router.post('/api/v1/accounts', Account.create);
-router.patch('/api/v1/accounts/:account_number/activate', Account.activate);
-router.patch('/api/v1/accounts/:account_number/deactivate', Account.deactivate);
-router.delete('/api/v1/accounts/:account_number', Account.delete);
+router.get('/api/v1/user/:email/accounts',auth.verifyToken, Account.getAccountId);
+router.get('/api/v1/accounts/:account_number', auth.verifyToken, Account.getAccountDetails);
+router.patch('/api/v1/accounts/:account_number/activate',auth.verifyToken, Account.activate);
+router.patch('/api/v1/accounts/:account_number/deactivate',auth.verifyToken, Account.deactivate);
+router.delete('/api/v1/accounts/:account_number',auth.verifyToken, Account.delete);
 
 export default router;
+
