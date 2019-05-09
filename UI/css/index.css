@@ -162,6 +162,12 @@ header nav ul li a:hover{
 	padding-top: 10%;
 	padding-bottom: 5%;
 }
+.userrepresent{
+	width: 80%;
+    margin: auto;
+	overflow: hidden;
+	margin-top: 105px;
+}
 /*/////////////////////////*/
 /*Signup */
 
